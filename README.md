@@ -4,10 +4,10 @@
 
 In few hours, quickly learn how to effectively leverage various AWS services to improve developer productivity and reduce the overall time to market for new product capabilities. In this session, we will demonstrate a prescriptive approach to incrementally adopt and embrace some of the best practices around continuous integration & delivery using AWS Developer Tools and 3rd party solutions including, AWS CodeCommit (a managed source control service), AWS CodeBuild (a fully managed build service), Jenkins (an open source automated build server), CodePipeline (a fully managed continuous delivery service), and CodeDeploy (an automated application deployment service). We will also highlight some best practices and productivity tips that can help make your software release process fast, automated, and reliable.
 
-# Prerequisites:
+## Prerequisites
 
 * **Configure AWS CodeCommit:** The easiest way to set up AWS CodeCommit is to configure HTTPS Git credentials for AWS CodeCommit. On the user details page in IAM console, choose the **Security Credentials** tab, and in **HTTPS Git credentials for AWS CodeCommit**, choose **Generate**. ![HTTPS Git Credential](./img/codecommit-iam-gc1.png)
-        **<u>💡 Note:</u>** Make Note of the Git HTTP credentials handy. It will be used for cloning and pushing changes to Repo.
+        **💡 Note:** Make Note of the Git HTTP credentials handy. It will be used for cloning and pushing changes to Repo.
           Also, You can find detail instruction on how to configure HTTPS Git Credential [here](https://docs.aws.amazon.com/codecommit/latest/userguide/setting-up-gc.html)
 * **IAM Permissions:** Finally, for the AWS account ensure you have sufficient privileges. You must have permissions for the following services:
 
@@ -45,7 +45,7 @@ AWS Cloud9 is a cloud-based integrated development environment (IDE) that lets y
 
 Take a moment now and setup your Cloud9 development environment.
 
-**✅  Step-by-step Instructions**
+### ✅  Step-by-step Instructions**
 
 1. Go to the AWS Management Console, click **Services** then select **Cloud9** under Developer Tools.
 2. Click **Create environment**.
@@ -54,19 +54,19 @@ Take a moment now and setup your Cloud9 development environment.
 5. You may leave **Environment settings** at their defaults of launching a new **t2.micro** EC2 instance which will be paused after **30 minutes** of inactivity.
 6. Click **Next step**.
 7. Review the environment settings and click **Create environment**. It will take several minutes for your environment to be provisioned and prepared.
-8. Once ready, your IDE will open to a welcome screen. Below that, you should see a terminal prompt similar to: ![](./img/setup-cloud9-terminal.png) You can run AWS CLI commands in here just like you would on your local computer. Verify that your user is logged in by running `aws sts get-caller-identity`.
+8. Once ready, your IDE will open to a welcome screen. Below that, you should see a terminal prompt similar to: ![setup](./img/setup-cloud9-terminal.png) You can run AWS CLI commands in here just like you would on your local computer. Verify that your user is logged in by running `aws sts get-caller-identity`.
 
-```
+```cmd
 aws sts get-caller-identity
 ```
 
 You'll see output indicating your account and user information:
 
-```
+```cmd
 Admin:~/environment $ aws sts get-caller-identity
 ```
 
-```
+```cmd
 {
     "Account": "123456789012",
     "UserId": "AKIAI44QH8DHBEXAMPLE",
@@ -77,6 +77,7 @@ Admin:~/environment $ aws sts get-caller-identity
 Keep your AWS Cloud9 IDE opened in a tab throughout this workshop as we'll use it for activities like cloning, pushing changes to repository and using the AWS CLI.
 
 ### 💡 Tips
+
 Keep an open scratch pad in Cloud9 or a text editor on your local computer for notes. When the step-by-step directions tell you to note something such as an ID or Amazon Resource Name (ARN), copy and paste that into the scratch pad.
 
 ***
