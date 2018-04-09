@@ -1,0 +1,296 @@
+{
+  "AWSTemplateFormatVersion" : "2010-09-09",
+
+  "Description" : "Builds service roles for CodeDeploy, CodePipeline and CodeBuild.This will also create an S3 Bucket.",
+
+  "Resources" : {
+    "BuildTrustRole": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Sid": "1",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": [
+                  "codebuild.amazonaws.com"
+                ]
+              },
+              "Action": "sts:AssumeRole"
+            }
+          ]
+        },
+        "Path": "/"
+      }
+    },
+
+    "CodeBuildRolePolicy": {
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "PolicyName": "CodeBuildPolicy",
+        "PolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Sid": "CloudWatchLogsPolicy",
+              "Effect": "Allow",
+              "Action": [
+                "logs:CreateLogGroup",
+                "logs:CreateLogStream",
+                "logs:PutLogEvents"
+              ],
+              "Resource": [
+                "*"
+              ]
+            },
+            {
+              "Sid": "CodeCommitPolicy",
+              "Effect": "Allow",
+              "Action": [
+                "codecommit:GitPull"
+              ],
+              "Resource": [
+                "*"
+              ]
+            },
+            {
+              "Sid": "S3GetObjectPolicy",
+              "Effect": "Allow",
+              "Action": [
+                "s3:GetObject",
+                "s3:GetObjectVersion"
+              ],
+              "Resource": [
+                "*"
+              ]
+            },
+            {
+              "Sid": "S3PutObjectPolicy",
+              "Effect": "Allow",
+              "Action": [
+                "s3:PutObject"
+              ],
+              "Resource": [
+                "*"
+              ]
+            },
+            {
+              "Sid": "SSMParameterPolicy",
+              "Effect": "Allow",
+              "Action": [
+                "ssm:GetParameters"
+              ],
+              "Resource": [
+                "*"
+              ]
+            }
+          ]
+        }
+        ,
+        "Roles": [{ "Ref": "BuildTrustRole"}]
+      }
+    },
+    "DeployTrustRole": {
+      "Type" : "AWS::IAM::Role",
+      "Properties" : {
+        "AssumeRolePolicyDocument" : {
+          "Statement" : [
+            {
+              "Sid" : "",
+              "Effect" : "Allow",
+              "Principal" : {
+                "Service": [
+                    "codedeploy.amazonaws.com"
+                ]
+              },
+              "Action" : "sts:AssumeRole"
+            }
+          ]
+        },
+        "ManagedPolicyArns" : [ "arn:aws:iam::aws:policy/service-role/AWSCodeDeployRole" ],
+        "Path" : "/"
+      }
+    },
+
+    "PipelineTrustRole": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Sid": "1",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": [
+                  "codepipeline.amazonaws.com"
+                ]
+              },
+              "Action": "sts:AssumeRole"
+            }
+          ]
+        },
+        "Path": "/"
+      }
+    },
+
+    "CodePipelinePolicy": {
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "PolicyName": "CodePipelinePolicy",
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "s3:*"
+              ],
+              "Resource": ["*"],
+              "Effect": "Allow"
+            },
+            {
+            "Action": [
+                "codecommit:GetBranch",
+                "codecommit:GetCommit",
+                "codecommit:UploadArchive",
+                "codecommit:GetUploadArchiveStatus",
+                "codecommit:CancelUploadArchive"
+              ],
+              "Resource": "*",
+              "Effect": "Allow"
+            },
+            {
+              "Action": [
+                "codepipeline:*",
+                "iam:ListRoles",
+                "iam:PassRole",
+                "codedeploy:CreateDeployment",
+                "codedeploy:GetApplicationRevision",
+                "codedeploy:GetDeployment",
+                "codedeploy:GetDeploymentConfig",
+                "codedeploy:RegisterApplicationRevision",
+                "lambda:*",
+                "sns:*"
+              ],
+              "Resource": "*",
+              "Effect": "Allow"
+            },
+            {
+              "Action": [
+                  "codebuild:StartBuild",
+                  "codebuild:StopBuild",
+                  "codebuild:BatchGet*",
+                  "codebuild:Get*",
+                  "codebuild:List*",
+                  "codecommit:GetBranch",
+                  "codecommit:GetCommit",
+                  "codecommit:GetRepository",
+                  "codecommit:ListBranches",
+                  "s3:GetBucketLocation",
+                  "s3:ListAllMyBuckets"
+              ],
+              "Effect": "Allow",
+              "Resource": "*"
+          },
+          {
+              "Action": [
+                  "logs:GetLogEvents"
+              ],
+              "Effect": "Allow",
+              "Resource": "arn:aws:logs:*:*:log-group:/aws/codebuild/*:log-stream:*"
+          }
+          ]
+        },
+        "Roles": [{ "Ref": "PipelineTrustRole"}]
+      }
+    },
+
+    "CodePipelineLambdaExecRole": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Sid": "1",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": [
+                  "lambda.amazonaws.com"
+                ]
+              },
+              "Action": "sts:AssumeRole"
+            }
+          ]
+        },
+        "Path": "/"
+      }
+    },
+
+    "CodePipelineLambdaExecPolicy": {
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "PolicyName": "CodePipelineLambdaExecPolicy",
+        "PolicyDocument": {
+  	       "Version": "2012-10-17",
+           "Statement": [
+    	       {
+      		      "Action": [
+                "logs:CreateLogGroup",
+                "logs:CreateLogStream",
+                "logs:PutLogEvents"
+                ],
+      		      "Effect": "Allow",
+      		      "Resource": "arn:aws:logs:*:*:*"},
+    	       {
+      		       "Action": ["codepipeline:PutJobSuccessResult",
+        	                 "codepipeline:PutJobFailureResult"],
+                 "Effect": "Allow",
+                 "Resource": "*" }]
+       },
+       "Roles": [{ "Ref": "CodePipelineLambdaExecRole"}]
+      }
+    },
+
+    "S3Bucket": {
+      "Type": "AWS::S3::Bucket",
+      "DeletionPolicy":"Retain",
+      "Properties": {
+        "BucketName" : { "Fn::Join" : ["", [ "cicd-workshop-", { "Ref": "AWS::Region" } , "-", {"Ref" : "AWS::AccountId"} ]] },
+        "VersioningConfiguration" : {
+          "Status" : "Enabled"
+        },
+        "Tags" : [
+          {"Key" : "Name", "Value" : "CICDWorkshop-S3Bucket" }
+        ]
+      }
+    }
+
+  },
+
+  "Outputs" : {
+    "BuildRoleArn" : {
+      "Value" : { "Fn::GetAtt" : [ "BuildTrustRole", "Arn" ] },
+      "Description" : "Build role Arn"
+    },
+
+    "DeployRoleArn" : {
+      "Value" : { "Fn::GetAtt" : [ "DeployTrustRole", "Arn" ] },
+      "Description" : "Deploy role Arn"
+    },
+
+    "PipelineRoleArn" : {
+      "Value" : { "Fn::GetAtt" : [ "PipelineTrustRole", "Arn" ] },
+      "Description" : "Pipeline role Arn"
+    },
+
+    "LambdaRoleArn" : {
+      "Value" : { "Fn::GetAtt" : [ "CodePipelineLambdaExecRole", "Arn" ] },
+      "Description" : "Lambda Exec role Arn"
+    },
+
+    "S3BucketName" : {
+      "Value" : { "Ref" : "S3Bucket" },
+      "Description" : "Bucket to for storing artifacts"
+    }
+
+  }
+}

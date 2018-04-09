@@ -1,0 +1,358 @@
+{
+  "AWSTemplateFormatVersion" : "2010-09-09",
+
+  "Description" : "a VPC w/ 1 public subnet, an IGW, route tables, ACL, 2 EC2 instances",
+
+  "Mappings" : {
+    "VPCIpSpace" : {
+      "us-east-1" : {"RANGE" : "10.42"},
+      "us-east-2" : {"RANGE" : "10.43"},
+      "us-west-2": {"RANGE" : "10.42"},
+      "us-west-1": {"RANGE" : "10.43"},
+      "ap-northeast-1": {"RANGE" : "10.42"},
+      "ap-northeast-2": {"RANGE" : "10.43"},
+      "ap-south-1": {"RANGE" : "10.44"},
+      "ap-southeast-1": {"RANGE" : "10.42"},
+      "ap-southeast-2": {"RANGE" : "10.43"},
+      "ca-central-1": {"RANGE" : "10.42"},
+      "eu-central-1": {"RANGE" : "10.42"},
+      "eu-west-1": {"RANGE" : "10.42"},
+      "eu-west-2": {"RANGE" : "10.43"},
+      "sa-east-1": {"RANGE" : "10.42"}
+    },
+
+    "SubnetTypeIpRanges" : {
+      "public" : {"RANGE" : "0.0/17"}
+    },
+
+    "publicSubnetConfig" : {
+      "publicSubnet01" : { "CIDR" : "10.0/24" }
+    },
+
+    "instancesTypes" : {
+      "Demo" : { "INST" : "t2.small" }
+    },
+
+    "AWSInstanceType2Virt": {
+      "t2.small": {"Virt": "HVM"}
+    },
+
+    "AWSInstanceType2EBSOpt": {
+      "t2.small": {"EBSOpt": "false"}
+    },
+
+    "AWSRegionVirt2AMI": {
+      "us-east-1": {"HVM": "ami-8c1be5f6"},
+      "us-east-2": {"HVM": "ami-c5062ba0"},
+      "us-west-2": {"HVM": "ami-e689729e"},
+      "us-west-1": {"HVM":"ami-02eada62"},
+      "ap-northeast-1": {"HVM": "ami-2a69be4c"},
+      "ap-northeast-2": {"HVM": "ami-9bec36f5"},
+      "ap-south-1": {"HVM": "ami-4fc58420"},
+      "ap-southeast-1": {"HVM": "ami-0797ea64"},
+      "ap-southeast-2": {"HVM": "ami-8536d6e7"},
+      "ca-central-1": {"HVM": "ami-fd55ec99"},
+      "eu-central-1": {"HVM": "ami-c7ee5ca8"},
+      "eu-west-1": {"HVM": "ami-acd005d5"},
+      "eu-west-2": {"HVM": "ami-1a7f6d7e"},
+      "sa-east-1": {"HVM": "ami-f1344b9d"}
+    }
+  },
+
+  "Resources" : {
+
+    "DevOpsVPC" : {
+      "Type" : "AWS::EC2::VPC",
+      "Properties" : {
+        "CidrBlock" : { "Fn::Join": [ "", [{ "Fn::FindInMap" : [ "VPCIpSpace", {"Ref": "AWS::Region"}, "RANGE" ]}, ".", "0.0/16"]]},
+        "EnableDnsSupport" : "true",
+        "EnableDnsHostnames" : "true",
+        "Tags" : [
+          {"Key" : "Name", "Value" : "Devops-VPC" }
+        ]
+      }
+    },
+
+    "publicSubnet01" : {
+      "Type" : "AWS::EC2::Subnet",
+      "Properties" : {
+        "VpcId" : { "Ref" : "DevOpsVPC" },
+        "CidrBlock" : { "Fn::Join": [ "", [{ "Fn::FindInMap" : [ "VPCIpSpace", {"Ref": "AWS::Region"}, "RANGE" ]}, ".", { "Fn::FindInMap" : [ "publicSubnetConfig", "publicSubnet01", "CIDR" ]}]]},
+        "AvailabilityZone" : { "Fn::Select" : [ "0", { "Fn::GetAZs" : { "Ref" : "AWS::Region" } }]},
+        "Tags" : [
+          {"Key" : "SubnetType", "Value" : "Public" },
+          {"Key" : "Name", "Value" : "publicSubnet01" }
+        ]
+      }
+    },
+
+    "InternetGateway" : {
+      "Type" : "AWS::EC2::InternetGateway",
+      "Properties" : {
+        "Tags" : [
+          {"Key" : "Name", "Value" : "Devops-VPCIGW" }
+        ]
+      }
+    },
+
+    "AttachGateway" : {
+      "Type" : "AWS::EC2::VPCGatewayAttachment",
+      "Properties" : {
+         "VpcId" : { "Ref" : "DevOpsVPC" },
+         "InternetGatewayId" : { "Ref" : "InternetGateway" }
+      }
+    },
+
+    "PublicRouteTable" : {
+      "Type" : "AWS::EC2::RouteTable",
+      "Properties" : {
+        "VpcId" : {"Ref" : "DevOpsVPC"},
+        "Tags" : [
+          {"Key" : "Name", "Value" : "PublicRouteTable" }
+        ]
+      }
+    },
+
+    "PublicRoute" : {
+      "Type" : "AWS::EC2::Route",
+      "Properties" : {
+        "RouteTableId" : { "Ref" : "PublicRouteTable" },
+        "DestinationCidrBlock" : "0.0.0.0/0",
+        "GatewayId" : { "Ref" : "InternetGateway" }
+      }
+    },
+
+    "PublicSubnetRTAssociation01" : {
+      "Type" : "AWS::EC2::SubnetRouteTableAssociation",
+      "Properties" : {
+        "SubnetId" : { "Ref" : "publicSubnet01" },
+        "RouteTableId" : { "Ref" : "PublicRouteTable" }
+      }
+    },
+
+    "PublicNetworkAcl" : {
+      "Type" : "AWS::EC2::NetworkAcl",
+      "Properties" : {
+        "VpcId" : { "Ref" : "DevOpsVPC" },
+        "Tags" : [
+          {"Key" : "Name", "Value" : "NetworkAcl" }
+        ]
+      }
+    },
+
+    "InboundPublicNAclEntry" : {
+      "Type" : "AWS::EC2::NetworkAclEntry",
+      "Properties" : {
+        "NetworkAclId" : { "Ref" : "PublicNetworkAcl" },
+        "RuleNumber" : "2000",
+        "Protocol" : "-1",
+        "RuleAction" : "allow",
+        "Egress" : "false",
+        "CidrBlock" : "0.0.0.0/0",
+        "PortRange" : { "From" : "0", "To" : "65535" }
+      }
+    },
+
+    "OutboundPublicNetworkAclEntry" : {
+      "Type" : "AWS::EC2::NetworkAclEntry",
+      "Properties" : {
+        "NetworkAclId" : { "Ref" : "PublicNetworkAcl" },
+        "RuleNumber" : "2000",
+        "Protocol" : "-1",
+        "RuleAction" : "allow",
+        "Egress" : "true",
+        "CidrBlock" : "0.0.0.0/0",
+        "PortRange" : { "From" : "0", "To" : "65535" }
+      }
+    },
+
+    "publicSubnetNetworkAclAssociation01" : {
+      "Type" : "AWS::EC2::SubnetNetworkAclAssociation",
+      "Properties" : {
+        "SubnetId" : { "Ref" : "publicSubnet01" },
+        "NetworkAclId" : { "Ref" : "PublicNetworkAcl" }
+      }
+    },
+
+    "WebAppRole": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Sid": "",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "ec2.amazonaws.com"
+              },
+              "Action": "sts:AssumeRole"
+            }
+          ]
+        },
+        "ManagedPolicyArns" : [ "arn:aws:iam::aws:policy/AWSCodeDeployReadOnlyAccess", "arn:aws:iam::aws:policy/AmazonEC2ReadOnlyAccess" ],
+        "Path": "/"
+      }
+    },
+
+    "WebAppRolePolicies": {
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "PolicyName": "BackendRole",
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Effect":"Allow",
+              "Action":"cloudformation:DescribeStackResources",
+              "Resource" : [
+                { "Fn::Join" : ["", [ "arn:aws:cloudformation:", { "Ref" : "AWS::Region" }, ":", {"Ref":"AWS::AccountId"}, ":stack/", { "Ref": "AWS::StackName" }, "/*"]]}
+              ]
+            },
+            {
+              "Effect": "Allow",
+              "Action": [
+                "autoscaling:Describe*",
+                "autoscaling:EnterStandby",
+                "autoscaling:ExitStandby",
+                "autoscaling:UpdateAutoScalingGroup"
+              ],
+              "Resource" : "*"
+            },
+            {
+              "Effect": "Allow",
+              "Action": [
+                "ec2:DescribeInstances",
+                "ec2:DescribeInstanceStatus"
+              ],
+              "Resource": "*"
+            },
+            {
+              "Effect": "Allow",
+              "Action": [
+                "s3:Get*",
+                "s3:List*"
+              ],
+              "Resource": [
+                { "Fn::Join" : ["", [ "arn:aws:s3:::cicd-workshop-", { "Ref": "AWS::Region" } , "-", {"Ref" : "AWS::AccountId"} ]] },
+                { "Fn::Join" : ["", [ "arn:aws:s3:::cicd-workshop-", { "Ref": "AWS::Region" } , "-", {"Ref" : "AWS::AccountId"}, "/*" ]] },
+                { "Fn::Join" : ["", [ "arn:aws:s3:::codepipeline-", "*" ]] }
+
+              ]
+            }
+          ]
+        },
+        "Roles": [{"Ref": "WebAppRole"}]
+      }
+    },
+
+    "WebAppInstanceProfile": {
+      "Type": "AWS::IAM::InstanceProfile",
+      "Properties": {
+        "Path": "/",
+        "Roles": [{"Ref": "WebAppRole"}]
+      }
+    },
+
+    "WebAppSG" : {
+      "Type" : "AWS::EC2::SecurityGroup",
+      "Properties" : {
+        "GroupDescription" : "Enable HTTP access on port 80",
+        "VpcId" : { "Ref" : "DevOpsVPC" },
+        "SecurityGroupIngress" : [
+          { "IpProtocol" : "tcp", "FromPort" : "80", "ToPort" : "80", "CidrIp" : "0.0.0.0/0"}
+        ],
+        "SecurityGroupEgress" : [
+          { "IpProtocol" : "tcp", "FromPort" : "80",  "ToPort" : "80",  "CidrIp" : "0.0.0.0/0" },
+          { "IpProtocol" : "tcp", "FromPort" : "443", "ToPort" : "443", "CidrIp" : "0.0.0.0/0" },
+          { "IpProtocol" : "udp", "FromPort" : "123", "ToPort" : "123", "CidrIp" : "0.0.0.0/0" },
+          { "IpProtocol" : "udp", "FromPort" : "9418", "ToPort" : "9418", "CidrIp" : "0.0.0.0/0" },
+          { "IpProtocol" : "icmp", "FromPort" : "-1",  "ToPort" : "-1",  "CidrIp" : "0.0.0.0/0" }
+        ],
+        "Tags" : [
+          {"Key" : "Name", "Value" : "WebAppSG" }
+        ]
+      }
+    },
+
+    "DevWebApp01" : {
+      "Type" : "AWS::EC2::Instance",
+      "Properties": {
+        "ImageId" : { "Fn::FindInMap" : [ "AWSRegionVirt2AMI", { "Ref" : "AWS::Region" }, {"Fn::FindInMap": ["AWSInstanceType2Virt", { "Fn::FindInMap" : [ "instancesTypes", "Demo", "INST" ]}, "Virt"]} ]},
+        "InstanceType" : { "Fn::FindInMap" : [ "instancesTypes", "Demo", "INST" ]},
+        "IamInstanceProfile" : {"Ref":"WebAppInstanceProfile"},
+        "EbsOptimized" : {"Fn::FindInMap": ["AWSInstanceType2EBSOpt", { "Fn::FindInMap" : [ "instancesTypes", "Demo", "INST" ]}, "EBSOpt"]},
+        "NetworkInterfaces" : [{
+          "SubnetId" : { "Ref" : "publicSubnet01" },
+          "GroupSet" : [{ "Ref" : "WebAppSG" }],
+          "AssociatePublicIpAddress" : "true",
+          "DeviceIndex" : "0"
+        }],
+        "UserData": {
+          "Fn::Base64": {
+            "Fn::Join": [ "", [ "#!/bin/bash -ex\n",
+                "yum install -y aws-cli\n",
+                "yum install -y git\n",
+                "cd /home/ec2-user/\n",
+                "wget https://aws-codedeploy-",{ "Ref": "AWS::Region" },".s3.amazonaws.com/latest/codedeploy-agent.noarch.rpm\n",
+                "yum -y install codedeploy-agent.noarch.rpm\n",
+                "service codedeploy-agent start\n",
+                "\n"
+              ]
+            ]
+          }
+        },
+        "Tags" : [
+          {"Key" : "Name", "Value" : "DevWebApp01" }
+        ]
+      }
+    },
+
+    "ProdWebApp01" : {
+      "Type" : "AWS::EC2::Instance",
+      "Properties": {
+        "ImageId" : { "Fn::FindInMap" : [ "AWSRegionVirt2AMI", { "Ref" : "AWS::Region" }, {"Fn::FindInMap": ["AWSInstanceType2Virt", { "Fn::FindInMap" : [ "instancesTypes", "Demo", "INST" ]}, "Virt"]} ]},
+        "InstanceType" : { "Fn::FindInMap" : [ "instancesTypes", "Demo", "INST" ]},
+        "IamInstanceProfile" : {"Ref":"WebAppInstanceProfile"},
+        "EbsOptimized" : {"Fn::FindInMap": ["AWSInstanceType2EBSOpt", { "Fn::FindInMap" : [ "instancesTypes", "Demo", "INST" ]}, "EBSOpt"]},
+        "NetworkInterfaces" : [{
+          "SubnetId" : { "Ref" : "publicSubnet01" },
+          "GroupSet" : [{ "Ref" : "WebAppSG" }],
+          "AssociatePublicIpAddress" : "true",
+          "DeviceIndex" : "0"
+        }],
+        "UserData": {
+          "Fn::Base64": {
+            "Fn::Join": [ "", [ "#!/bin/bash -ex\n",
+                "yum install -y aws-cli\n",
+                "cd /home/ec2-user/\n",
+                "wget https://aws-codedeploy-",{ "Ref": "AWS::Region" },".s3.amazonaws.com/latest/codedeploy-agent.noarch.rpm\n",
+                "yum -y install codedeploy-agent.noarch.rpm\n",
+                "service codedeploy-agent start\n",
+                "\n"
+              ]
+            ]
+          }
+        },
+        "Tags" : [
+          {"Key" : "Name", "Value" : "ProdWebApp01" }
+        ]
+      }
+    }
+
+  },
+
+  "Outputs" : {
+
+
+    "DevPublicDNS" : {
+      "Value" : { "Fn::Join" : ["",["http://",{ "Fn::GetAtt" : [ "DevWebApp01", "PublicDnsName" ] }]]},
+      "Description" : "DevWebApp01 Public DNS Name"
+    },
+
+
+    "ProdPublicDNS" : {
+      "Value" : { "Fn::Join" : ["",["http://",{ "Fn::GetAtt" : [ "ProdWebApp01", "PublicDnsName" ] }]]},
+      "Description" : "ProdWebApp01 Public DNS Name"
+    }
+
+  }
+}

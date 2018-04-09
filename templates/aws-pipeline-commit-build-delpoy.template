@@ -1,0 +1,489 @@
+{
+  "AWSTemplateFormatVersion" : "2010-09-09",
+
+  "Description" : "Roles, S3 bucket, CodeDeploy and CodePipeline setup",
+
+  "Parameters":{
+
+    "AppName": {
+      "Type" : "String",
+      "Description" : "Name of the application on Code Commit",
+      "MinLength": "2",
+      "MaxLength": "30",
+      "Default" : "app-name",
+      "AllowedPattern" : "[-._ a-zA-Z0-9]*",
+      "ConstraintDescription": "Must be between 2 and 30 characters long, lowercase,uppercase and may contain alphanumeric characters"
+    },
+
+    "AppBranch": {
+      "Type" : "String",
+      "Description" : "Branch name of the application on Code Commit",
+      "MinLength": "2",
+      "MaxLength": "15",
+      "Default" : "master",
+      "AllowedPattern" : "[-._ a-zA-Z0-9]*",
+      "ConstraintDescription": "Must be between 2 and 15 characters long, lowercase,uppercase and may contain alphanumeric characters."
+    },
+
+    "BuildSize": {
+      "Type" : "String",
+      "Description" : "Build Environment Compute Types",
+      "Default" : "BUILD_GENERAL1_SMALL",
+      "AllowedValues" : ["BUILD_GENERAL1_SMALL", "BUILD_GENERAL1_MEDIUM", "BUILD_GENERAL1_LARGE"]
+      },
+
+    "BuildImage": {
+      "Type" : "String",
+      "Description" : "Build Image Environemnt Types",
+      "Default" : "aws/codebuild/java:openjdk-8",
+      "AllowedValues" : [ "aws/codebuild/dot-net:core-1", "aws/codebuild/docker:1.12.1", "aws/codebuild/nodejs:7.0.0", "aws/codebuild/golang:1.7.3",
+                          "aws/codebuild/ruby:2.3.1", "aws/codebuild/python:3.5.2", "aws/codebuild/java:openjdk-8", "aws/codebuild/android-java-8:24.4.1", "aws/codebuild/ubuntu-base:14.04"]
+    },
+
+    "DevKeyName": {
+      "Type" : "String",
+      "Description" : "Dev instances Tag - Key for Deployment",
+      "MinLength": "2",
+      "MaxLength": "30",
+      "Default" : "key",
+      "AllowedPattern" : "[-._ a-zA-Z0-9]*",
+      "ConstraintDescription": "Must be between 2 and 30 characters long, lowercase and may contain alphanumeric characters, hyphens (-), and dots (.), but must start with alphanumeric."
+    },
+    "DevValueName": {
+      "Type" : "String",
+      "Description" : "Dev instances Tag - Value for Deployment",
+      "MinLength": "2",
+      "MaxLength": "30",
+      "Default" : "value",
+      "AllowedPattern" : "[-._ a-zA-Z0-9]*",
+      "ConstraintDescription": "Must be between 2 and 30 characters long, lowercase and may contain alphanumeric characters, hyphens (-), and dots (.), but must start with alphanumeric."
+    },
+
+    "ProdKeyName": {
+      "Type" : "String",
+      "Description" : "Production instances Tag - Key for Deployment",
+      "MinLength": "2",
+      "MaxLength": "30",
+      "Default" : "key",
+      "AllowedPattern" : "[-._ a-zA-Z0-9]*",
+      "ConstraintDescription": "Must be between 2 and 30 characters long, lowercase and may contain alphanumeric characters, hyphens (-), and dots (.), but must start with alphanumeric."
+    },
+
+    "ProdValueName": {
+      "Type" : "String",
+      "Description" : "Production instances Tag - Value for Deployment",
+      "MinLength": "2",
+      "MaxLength": "30",
+      "Default" : "value",
+      "AllowedPattern" : "[-._ a-zA-Z0-9]*",
+      "ConstraintDescription": "Must be between 2 and 30 characters long, lowercase and may contain alphanumeric characters, hyphens (-), and dots (.), but must start with alphanumeric."
+    }
+  },
+
+  "Metadata" : {
+    "AWS::CloudFormation::Interface" : {
+      "ParameterGroups" : [
+        {
+          "Label" : { "default" : "Application Source - CodeCommit" },
+          "Parameters" : [ "AppName","AppBranch" ]
+        },
+
+        {
+          "Label" : { "default" : "Application Build - CodeBuild" },
+          "Parameters" : [ "BuildSize","BuildImage" ]
+        },
+
+        {
+          "Label" : { "default" : "Development Deployment config - CodeDeploy" },
+          "Parameters" : [ "DevKeyName","DevValueName" ]
+        },
+
+        {
+          "Label" : { "default" : "Production Deployment config - CodeDeploy" },
+          "Parameters" : [ "ProdKeyName","ProdValueName" ]
+        },
+
+      ]
+    }
+  },
+
+  "Resources" : {
+    "CodeBuildTrustRole": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Sid": "1",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": [
+                  "codebuild.amazonaws.com"
+                ]
+              },
+              "Action": "sts:AssumeRole"
+            }
+          ]
+        },
+        "Path": "/"
+      }
+    },
+
+    "CodeBuildPolicy": {
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "PolicyName": "CodeBuildPolicy",
+        "PolicyDocument": {
+          "Statement": [
+              {
+                  "Effect": "Allow",
+                  "Resource": [
+                      { "Fn::Join" : ["", [ "arn:aws:logs:", { "Ref": "AWS::Region" } , ":", {"Ref" : "AWS::AccountId"}, ":log-group:/aws/codebuild/", {"Ref" : "AppName"} ]] },
+                      { "Fn::Join" : ["", [ "arn:aws:logs:", { "Ref": "AWS::Region" } , ":", {"Ref" : "AWS::AccountId"}, ":log-group:/aws/codebuild/", {"Ref" : "AppName"} ,":*" ]] }
+
+                  ],
+                  "Action": [
+                      "logs:CreateLogGroup",
+                      "logs:CreateLogStream",
+                      "logs:PutLogEvents"
+                  ]
+              },
+              {
+                  "Effect": "Allow",
+                  "Resource": [
+                    { "Fn::Join" : ["", [ "arn:aws:s3:::cicd-demo-", { "Ref": "AWS::Region" } , "-", {"Ref" : "AWS::AccountId"} ]] },
+                    { "Fn::Join" : ["", [ "arn:aws:s3:::cicd-demo-", { "Ref": "AWS::Region" } , "-", {"Ref" : "AWS::AccountId"}, "/*"  ]]}
+                  ],
+                  "Action": [
+                      "s3:PutObject",
+                      "s3:GetObject",
+                      "s3:GetObjectVersion"
+                  ]
+              }
+          ]
+        },
+        "Roles": [{ "Ref": "CodeBuildTrustRole"}]
+      }
+    },
+
+    "CodeBuildProject": {
+      "Type": "AWS::CodeBuild::Project",
+      "Properties": {
+        "Name": {"Ref" : "AppName"},
+        "Description": "This is demo web app project",
+        "ServiceRole": { "Fn::GetAtt": [ "CodeBuildTrustRole", "Arn" ] },
+        "Artifacts": {
+          "Type": "CODEPIPELINE"
+        },
+        "Environment": {
+          "Type": "linuxContainer",
+          "ComputeType": {"Ref":"BuildSize"},
+          "Image": {"Ref":"BuildImage"},
+          "EnvironmentVariables": []
+        },
+        "Source": {
+          "Type": "CODEPIPELINE"
+        },
+        "TimeoutInMinutes": 30,
+        "Tags": []
+      }
+    },
+
+    "CodeDeployTrustRole": {
+      "Type" : "AWS::IAM::Role",
+      "Properties" : {
+        "AssumeRolePolicyDocument" : {
+          "Statement" : [
+            {
+              "Sid" : "",
+              "Effect" : "Allow",
+              "Principal" : {
+                "Service": [
+                    "codedeploy.amazonaws.com"
+                ]
+              },
+              "Action" : "sts:AssumeRole"
+            }
+          ]
+        },
+        "ManagedPolicyArns" : [ "arn:aws:iam::aws:policy/service-role/AWSCodeDeployRole" ],
+        "Path" : "/"
+      }
+    },
+
+    "MyApp" : {
+      "Type" : "AWS::CodeDeploy::Application",
+      "Properties" : {
+        "ApplicationName" : {"Ref" : "AppName"}
+      }
+    },
+
+    "DevDeploymentGroup" : {
+      "DependsOn" : "CodeDeployTrustRole",
+      "Type" : "AWS::CodeDeploy::DeploymentGroup",
+      "Properties" : {
+        "ApplicationName" : {"Ref" : "MyApp"},
+        "DeploymentGroupName" : {"Fn::Join" : ["", [{"Ref" : "AppName"}, "-DevEnv"]]},
+        "DeploymentConfigName" : "CodeDeployDefault.OneAtATime",
+        "ServiceRoleArn" : {"Fn::GetAtt" : ["CodeDeployTrustRole", "Arn"]},
+        "Ec2TagFilters" : [{
+          "Key" : {"Ref":"DevKeyName"},
+          "Value" : {"Ref":"DevValueName"},
+          "Type" : "KEY_AND_VALUE"
+        }]
+      }
+    },
+
+    "ProdDeploymentGroup" : {
+      "DependsOn" : "CodeDeployTrustRole",
+      "Type" : "AWS::CodeDeploy::DeploymentGroup",
+      "Properties" : {
+        "ApplicationName" : {"Ref" : "MyApp"},
+        "DeploymentGroupName" : {"Fn::Join" : ["", [{"Ref" : "AppName"}, "-ProdEnv"]]},
+        "DeploymentConfigName" : "CodeDeployDefault.OneAtATime",
+        "ServiceRoleArn" : {"Fn::GetAtt" : ["CodeDeployTrustRole", "Arn"]},
+        "Ec2TagFilters" : [{
+          "Key" : {"Ref":"ProdKeyName"},
+          "Value" : {"Ref":"ProdValueName"},
+          "Type" : "KEY_AND_VALUE"
+        }]
+      }
+    },
+
+    "CodePipelineTrustRole": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Sid": "1",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": [
+                  "codepipeline.amazonaws.com"
+                ]
+              },
+              "Action": "sts:AssumeRole"
+            }
+          ]
+        },
+        "Path": "/"
+      }
+    },
+
+    "CodePipelineRolePolicies": {
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "PolicyName": "CodePipelinePolicy",
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "s3:*"
+              ],
+              "Resource": ["*"],
+              "Effect": "Allow"
+            },
+            {
+              "Action": [
+                "s3:PutBucketPolicy",
+                "s3:PutObject"
+              ],
+              "Resource": [
+                { "Fn::Join" : ["", [ "arn:aws:s3:::cicd-demo-", { "Ref": "AWS::Region" } , "-", {"Ref" : "AWS::AccountId"} ]] }
+              ],
+              "Effect": "Allow"
+            },
+            {
+            "Action": [
+                "codecommit:GetBranch",
+                "codecommit:GetCommit",
+                "codecommit:UploadArchive",
+                "codecommit:GetUploadArchiveStatus",
+                "codecommit:CancelUploadArchive"
+              ],
+              "Resource": "*",
+              "Effect": "Allow"
+            },
+            {
+              "Action": [
+                "codepipeline:*",
+                "iam:ListRoles",
+                "iam:PassRole",
+                "codedeploy:CreateDeployment",
+                "codedeploy:GetApplicationRevision",
+                "codedeploy:GetDeployment",
+                "codedeploy:GetDeploymentConfig",
+                "codedeploy:RegisterApplicationRevision",
+                "elasticbeanstalk:DescribeApplications",
+                "elasticbeanstalk:DescribeEnvironments",
+                "lambda:GetFunctionConfiguration",
+                "lambda:ListFunctions"
+              ],
+              "Resource": "*",
+              "Effect": "Allow"
+            },
+            {
+              "Action": [
+                  "codebuild:StartBuild",
+                  "codebuild:StopBuild",
+                  "codebuild:BatchGet*",
+                  "codebuild:Get*",
+                  "codebuild:List*",
+                  "codecommit:GetBranch",
+                  "codecommit:GetCommit",
+                  "codecommit:GetRepository",
+                  "codecommit:ListBranches",
+                  "s3:GetBucketLocation",
+                  "s3:ListAllMyBuckets"
+              ],
+              "Effect": "Allow",
+              "Resource": "*"
+          },
+          {
+              "Action": [
+                  "logs:GetLogEvents"
+              ],
+              "Effect": "Allow",
+              "Resource": "arn:aws:logs:*:*:log-group:/aws/codebuild/*:log-stream:*"
+          }
+          ]
+        },
+        "Roles": [{ "Ref": "CodePipelineTrustRole"}]
+      }
+    },
+
+    "MyPipeline": {
+      "Type": "AWS::CodePipeline::Pipeline",
+      "DependsOn" : "S3Bucket",
+      "Properties": {
+        "Name": {"Fn::Join" : ["", [{"Ref" : "AppName"}, "-Pipeline"]]},
+        "RoleArn": {"Fn::GetAtt" : ["CodePipelineTrustRole", "Arn"]},
+        "Stages": [
+          {
+            "Name": "Source",
+            "Actions": [
+              {
+                "Name": "ApplicationSource",
+                "InputArtifacts": [],
+                "ActionTypeId": {
+                  "Version": "1",
+                  "Category": "Source",
+                  "Owner" : "AWS",
+                  "Provider": "CodeCommit"
+                },
+                "OutputArtifacts": [
+                  {
+                    "Name": {"Fn::Join" : ["", [{"Ref" : "AppName"}, "-SourceArtifact"]]}
+                  }
+                ],
+                "Configuration": {
+                      "RepositoryName": {"Ref" : "AppName"},
+                      "BranchName": {"Ref" : "AppBranch"}
+                },
+                "RunOrder": 1
+              }
+            ]
+          },
+          {
+            "Name": "Build",
+            "Actions": [
+              {
+                "Name": "ApplicationBuild",
+                "InputArtifacts": [
+                  {
+                    "Name": {"Fn::Join" : ["", [{"Ref" : "AppName"}, "-SourceArtifact"]]}
+                  }
+                ],
+                "ActionTypeId": {
+                  "Category": "Build",
+                  "Owner": "AWS",
+                  "Version": "1",
+                  "Provider": "CodeBuild"
+                },
+                "OutputArtifacts": [
+                  {
+                    "Name": {"Fn::Join" : ["", [{"Ref" : "AppName"}, "-BuiltArtifact"]]}
+                  }
+                ],
+                "Configuration": {
+                  "ProjectName": {"Ref" : "AppName"}
+                },
+                "RunOrder": 1
+              }
+            ]
+          },
+          {
+            "Name": "Beta",
+            "Actions": [
+              {
+                "Name": "BetaDeploy",
+                "InputArtifacts": [
+                  {
+                    "Name": {"Fn::Join" : ["", [{"Ref" : "AppName"}, "-BuiltArtifact"]]}
+                  }
+                ],
+                "ActionTypeId": {
+                  "Category": "Deploy",
+                  "Owner": "AWS",
+                  "Version": "1",
+                  "Provider": "CodeDeploy"
+                },
+                "Configuration": {
+                  "ApplicationName": {"Ref" : "MyApp"},
+                  "DeploymentGroupName": {"Ref" : "DevDeploymentGroup"}
+                },
+                "RunOrder": 1
+              }
+            ]
+          },
+          {
+            "Name": "Prod",
+            "Actions": [
+              {
+                "Name": "ProdDeploy",
+                "InputArtifacts": [
+                  {
+                    "Name": {"Fn::Join" : ["", [{"Ref" : "AppName"}, "-BuiltArtifact"]]}
+                  }
+                ],
+                "ActionTypeId": {
+                  "Category": "Deploy",
+                  "Owner": "AWS",
+                  "Version": "1",
+                  "Provider": "CodeDeploy"
+                },
+                "Configuration": {
+                  "ApplicationName": {"Ref" : "MyApp"},
+                  "DeploymentGroupName": {"Ref" : "ProdDeploymentGroup"}
+                },
+                "RunOrder": 1
+              }
+            ]
+          }
+        ],
+        "ArtifactStore": {
+          "Type": "S3",
+          "Location": { "Fn::Join" : ["", [ "cicd-demo-", { "Ref": "AWS::Region" } , "-", {"Ref" : "AWS::AccountId"} ]] }
+        }
+      }
+    },
+    "S3Bucket": {
+      "Type": "AWS::S3::Bucket",
+      "DeletionPolicy":"Retain",
+      "Properties": {
+        "BucketName" : { "Fn::Join" : ["", [ "cicd-demo-", { "Ref": "AWS::Region" } , "-", {"Ref" : "AWS::AccountId"} ]] },
+        "VersioningConfiguration" : {
+          "Status" : "Enabled"
+        },
+        "Tags" : [
+          {"Key" : "Name", "Value" : "CICDWorkshop-S3Bucket" }
+        ]
+      }
+    }
+  },
+
+  "Outputs" : {
+
+  }
+}
