@@ -86,7 +86,7 @@ Keep an open scratch pad in Cloud9 or a text editor on your local computer for n
 
 **_To create the AWS CodeCommit repository (console)_**
 
-1. Open the AWS CodeCommit console at https://console.aws.amazon.com/codecommit.
+1. Open the AWS CodeCommit console at <https://console.aws.amazon.com/codecommit>.
 2. In the region selector, choose the region where you will create the repository. For more information, see [Regions and Git Connection Endpoints](http://docs.aws.amazon.com/codecommit/latest/userguide/regions.html).
 3. On the Welcome page, choose Get Started Now. (If a **_Dashboard_** page appears instead, choose **_Create repository_**.)
 4. On the **_Create repository_** page, in the **_Repository name_** box, type **_WebAppRepo_**.
@@ -105,12 +105,12 @@ In this step, you will connect to the source repository created in the previous 
 2. In the region selector, choose the region where the repository was created. Repositories are specific to an AWS region.
 3. Run git clone to pull down a copy of the repository into the local repo:
 
-```
+```cmd
 git clone https://git-codecommit.<YOUR-REGION>.amazonaws.com/v1/repos/WebAppRepo
 
 ```
 
-Provide your Git HTTPs credential when prompted. You would be seeing the following message if cloning is successful. <i>warning: You appear to have cloned an empty repository.</i>
+Provide your Git HTTPs credential when prompted. You would be seeing the following message if cloning is successful. ***warning: You appear to have cloned an empty repository.***
 
 ***
 
@@ -118,27 +118,28 @@ Provide your Git HTTPs credential when prompted. You would be seeing the followi
 
 1. Download the Sample Web App Archive by running the following command from IDE terminal.
 
-```
+```cmd
 wget https://github.com/awslabs/aws-devops-essential/raw/master/sample-app/Web-App-Archive.zip
 ```
+
 2. Unarchive and copy all the **_contents_** of the unarchived folder to your local repo folder.
 
-```
+```cmd
 unzip Web-App-Archive.zip
 mv -v Web-App-Archive/* WebAppRepo/
 ```
 
-After moving the files, your local repo should like the one below. ![](./img/Cloud9-IDE-Screen-Sample.png)
+After moving the files, your local repo should like the one below. ![cloud9](./img/Cloud9-IDE-Screen-Sample.png)
 3. Change the directory to your local repo folder. Run **_git add_** to stage the change:
 
-```
+```cmd
 cd WebAppRepo
 git add *
 ```
 
 4. Run **_git commit_** to commit the change:
 
-```
+```cmd
 git commit -m "Initial Commit"
 ```
 
@@ -146,7 +147,7 @@ git commit -m "Initial Commit"
 
 5. Run **_git push_** to push your commit through the default remote name Git uses for your AWS CodeCommit repository (origin), from the default branch in your local repo (master):
 
-```
+```cmd
 git push -u origin master
 ```
 
@@ -161,18 +162,19 @@ Provide your Git HTTPs credential when prompted.
 1. First, let us create the necessary roles required to finish labs. Run the CloudFormation stack to create service roles.
   Ensure you are launching it in the same region as your AWS CodeCommit repo.
 
-```
+```cmd
 aws cloudformation create-stack --stack-name DevopsWorkshop-roles --template-body https://github.com/awslabs/aws-devops-essential/raw/master/templates/01-aws-devops-workshop-roles.template --capabilities CAPABILITY_IAM
 ```
 
-**_Tip_** To learn more about AWS CloudFormation, please refer to [AWS CloudFormation UserGuide.]()
+**_Tip_** To learn more about AWS CloudFormation, please refer to [AWS CloudFormation UserGuide.](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/Welcome.html)
 
 2. Upon completion take a note on the service roles created. Check [describe-stacks](http://docs.aws.amazon.com/cli/latest/reference/cloudformation/describe-stacks.html) to find the output of the stack.
+
 3. For Console, refer to the CloudFormation [Outputs tab](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/cfn-console-view-stack-data-resources.html) to see output. A S3 Bucket is also created. Make a note of this bucket. This will be used to store the output from CodeBuild in the next step. **_Sample Output:_** ![](./img/cfn-output.png)
 4. Let us **create CodeBuild** project from **CLI**. To create the build project using AWS CLI, we need JSON-formatted input.
     **_Create_** a json file named **_'create-project.json'_** under 'MyDevEnvironment'. ![](./img/create-json.png) Copy the content below to create-project.json. (Replace the placeholders marked with **_<<>>_** with your own values.) To know more about the codebuild project json [review the spec](http://docs.aws.amazon.com/codebuild/latest/userguide/create-project.html#create-project-cli).
 
-```
+```json
 {
   "name": "devops-webapp-project",
   "source": {
@@ -196,13 +198,13 @@ aws cloudformation create-stack --stack-name DevopsWorkshop-roles --template-bod
 
 5. Switch to the directory that contains the file you just saved, and run the **_create-project_** command:
 
-```
+```cmd
 aws codebuild create-project --cli-input-json file://create-project.json
 ```
 
 6. Sample output JSON for your reference
 
-```
+```json
 {
   "project": {
     "name": "project-name",
@@ -253,9 +255,9 @@ aws codebuild create-project --cli-input-json file://create-project.json
 ```
 
 7. If successful, output JSON should have values such as:
-  - The lastModified value represents the time, in Unix time format, when information about the build project was last changed.
-  - The created value represents the time, in Unix time format, when the build project was created.
-  - The ARN value represents the ARN of the build project.
+  * The lastModified value represents the time, in Unix time format, when information about the build project was last changed.
+  * The created value represents the time, in Unix time format, when the build project was created.
+  * The ARN value represents the ARN of the build project.
 
 **_Note_** Except for the build project name, you can change any of the build project's settings later. For more information, see [Change a Build Project's Settings (AWS CLI)](http://docs.aws.amazon.com/codebuild/latest/userguide/change-project.html#change-project-cli).
 
@@ -291,13 +293,13 @@ artifacts:
 
 As a sample shown below:
 
-![](./img/build-spec.png)
+![buildspec](./img/build-spec.png)
 
 **_Note_** Visit this [page](http://docs.aws.amazon.com/codebuild/latest/userguide/build-spec-ref.html) to know more about build spec and how you can use multiple build specs in the same repo.
 
 2. Run the **_start-build_** command:
 
-```
+```cmd
 aws codebuild start-build --project-name devops-webapp-project
 ```
 
@@ -306,7 +308,7 @@ aws codebuild start-build --project-name devops-webapp-project
 3. If successful, data would appear showing successful submission. Make a note of the build id value. You will need it in the next step.
 4. In this step, you will view summarized information about the status of your build.
 
-```
+```cmd
 aws codebuild batch-get-builds --ids <<ID>>
 ```
 
@@ -343,7 +345,7 @@ aws cloudformation create-stack --stack-name DevopsWorkshop-Env --template-url h
   - The Stack will have a VPC w/ 1 public subnet, an IGW, route tables, ACL, 2 EC2 instances. Also, the EC2 instances will be launched with a User Data script to **automatically install the AWS CodeDeploy agent**.
   - **Verify** that by visiting the **EC2 Console** and view option for **user data**.You would see the following script.
 
-```
+```cmd
 #!/bin/bash -ex
 yum install -y aws-cli
 cd /home/ec2-user/
@@ -352,8 +354,8 @@ yum -y install codedeploy-agent.noarch.rpm
 service codedeploy-agent start
 ```
 
-  - You can refer to [this instruction](http://docs.aws.amazon.com/codedeploy/latest/userguide/codedeploy-agent-operations-install.html) to install the CodeDeploy agent for other OSs like Amazon Linux, RHEL, Ubuntu, or Windows.
-  - AWS CodeDeploy can deploy to both Amazon EC2 instances and on-premises instances.To know more [visit](http://docs.aws.amazon.com/codedeploy/latest/userguide/instances.html).
+  -You can refer to [this instruction](http://docs.aws.amazon.com/codedeploy/latest/userguide/codedeploy-agent-operations-install.html) to install the CodeDeploy agent for other OSs like Amazon Linux, RHEL, Ubuntu, or Windows.
+  -AWS CodeDeploy can deploy to both Amazon EC2 instances and on-premises instances.To know more [visit](http://docs.aws.amazon.com/codedeploy/latest/userguide/instances.html).
 
 ***
 
@@ -361,13 +363,13 @@ service codedeploy-agent start
 
 1. Run the following to create an application for CodeDeploy.
 
-```
+```cmd
 aws deploy create-application --application-name DevOps-WebApp
 ```
 
 2. Run the following to create a deployment group and associates it with the specified application and the user's AWS account. You need to replace the service role with **DeployRoleArn Value** we created using roles CFN stack.
 
-```
+```cmd
 aws deploy create-deployment-group --application-name DevOps-WebApp  --deployment-config-name CodeDeployDefault.OneAtATime --deployment-group-name DevOps-WebApp-BetaGroup --ec2-tag-filters Key=Name,Value=DevWebApp01,Type=KEY_AND_VALUE --service-role-arn <<REPLACE-WITH-YOUR-CODEDEPLOY-ROLE-ARN>>
 ```
 
@@ -382,7 +384,7 @@ aws deploy create-deployment-group --application-name DevOps-WebApp  --deploymen
 1. Without an AppSpec file, AWS CodeDeploy cannot map the source files in your application revision to their destinations or run scripts at various stages of the deployment.
 2. Copy the template into a text editor and save the file as **_appspec.yml_** in the **_WebAppRepo_** directory of the revision.
 
-```
+```yml
 version: 0.0
 os: linux
 files:
@@ -408,12 +410,12 @@ hooks:
 
 As a sample shown below:
 
-![](./img/app-spec.png)
+![appspec](./img/app-spec.png)
 
 3. **_Review_** the **_script folder_** in the repo for the various scripts like Start, Stop, health check etc. These scripts will be called as per the hook definition in **_appsec.yml_** file during deployment.
 4. Since we are going to deploy the application via CodeDeploy, we need to package additional files needed by CodeDeploy. Let us **_make change_** to the **_buildspec.yml_** to incorporate the changes.
 
-```
+```yml
 version: 0.1
 
 phases:
@@ -446,25 +448,25 @@ artifacts:
 
 1. Run the **_start-build_** command:
 
-```
+```cmd
 aws codebuild start-build --project-name devops-webapp-project
 ```
 
 2. Visit the CodeBuild Console to ensure build is successful. Upon successful completion of build, we should see new **_WebAppOutputArtifact.zip_** upload to the configured CodeBuild S3 Bucket.
 3. Get the **_eTag_** for the object **WebAppOutputArtifact.zip** uploaded to S3 bucket. You can get etag by visiting S3 console. Or, executing the following command.
 
-```
+```cmd
 aws s3api head-object --bucket <<YOUR-CODEBUILD-OUTPUT-BUCKET>> --key WebAppOutputArtifact.zip
 
 ```
 
 As a sample S3 properties console showing etag below:
 
-![](./img/etag.png)
+![etag](./img/etag.png)
 
 4. Run the following to create a deployment. **_Replace_** <<YOUR-CODEBUILD-OUTPUT-BUCKET>> with your **_S3 bucket name_** created in Lab 1. Also, update the **_eTag_** based on previous step.
 
-```
+```cmd
 aws deploy create-deployment --application-name DevOps-WebApp --deployment-group-name DevOps-WebApp-BetaGroup --description "My very first deployment" --s3-location bucket=<<YOUR-CODEBUILD-OUTPUT-BUCKET>>,key=WebAppOutputArtifact.zip,bundleType=zip,eTag=<<YOUR-ETAG-VALUE>>
 ```
 
@@ -473,7 +475,7 @@ aws deploy create-deployment --application-name DevOps-WebApp --deployment-group
 7. if the status of deployment is success, we should be able to view the web application deployed successfully to the EC2 server namely **_DevWebApp01_**
 8. Go to the **EC2 Console**, get the **public DNS name** of the server and open the url in a browser. You should see a sample web application.
 
-### Summary:
+### Summary
 
 This **concludes Lab 2**. In this lab, we successfully created CodeDeploy application and deployment group. We also modified buildspec.yml to include additional components needed for deployment. We also successfully completed deployment of application to test server.
 
@@ -499,14 +501,12 @@ Also, existing pipeline configuration can be exported and used to create pipelin
 2. On the **Welcome** page, choose **Create pipeline**.
 
 If this is your first time using AWS CodePipeline, an introductory page appears instead of **Welcome**. Choose **Get Started Now**.
-
 3. On the **Step 1: Name** page, in the **Pipeline name** box, type the name for your pipeline, and then choose **Next step**.
 
 Within a single AWS account, each pipeline you create in a region must have a unique name. Names can be reused for pipelines in different regions.
 
 **_Note_**
 After you create a pipeline, you cannot change its name. For information about other limitations, see [Limits in AWS CodePipeline](https://docs.aws.amazon.com/codepipeline/latest/userguide/limits.html).
-
 4. On the **Step 2: Source** page, in the **Source provider** drop-down list, choose the type of repository where your source code is stored and specify its required options:
   - **AWS CodeCommit**: In **Repository name**, choose the name of the AWS CodeCommit repository you created in Lab 1 to use as the source location for your pipeline. In Branch name, from the drop-down list, choose the branch you want to use.
   - After you choose the AWS CodeCommit repository name and branch, a message is displayed in **Change Detection Mode** showing the Amazon CloudWatch Events rule that will be created for this pipeline. Leave default selection. Choose **Next step**.
@@ -561,13 +561,13 @@ If the action is approved, the pipeline execution resumes. If the action is reje
 
 1. **Create SNS topic** for Approval notification. And note the **topic ARN** from the result.
 
-```
+```cmd
 aws sns create-topic --name WebApp-Approval-Topic
 ```
 
 2. **Subscribe** to the topic using your email id. **Replace** the **ARN** and **email id** placeholders accordingly.
 
-```
+```cmd
 aws sns subscribe --topic-arn <<YOUR-TOPIC-ARN>> --protocol email --notification-endpoint <<YOUR-EMAIL-ID>>
 ```
 
@@ -597,7 +597,7 @@ If you receive a notification that includes a direct link to an approval action,
 6. Return to the pipeline details view, and then choose the **Review** button.
 7. In the **Approve or reject** the revision window, type comments related to your review, such as why you are approving or rejecting the action, and then choose the **Approve** or **Reject** button.
 
-### Summary:
+### Summary
 
 This **concludes Lab 3**. In this lab, we successfully created CodePipeline for continuous code build and deployment. We also modified CodePipeline to include manual approval action before deploying code to production environment. We also successfully completed continuos deployment of application to both test and production servers.
 
@@ -618,14 +618,14 @@ This **concludes Lab 3**. In this lab, we successfully created CodePipeline for 
 2. On the **Lambda** console page, choose **Create a function**.
 3. On the **Blueprints** page, choose **Author from scratch**.
 4. On the **Basic information section** page
-  - For **Name***, type a name for your Lambda function (for example, **MyLambdaFunctionForAWSCodePipeline**).
-  - For **Role***, select **choose an existing role.**
-  - For **Existing role*** select **CodePipelineLambdaExecRole** which we created as part of the Lab 1 setup.
+* For **Name***, type a name for your Lambda function (for example, **MyLambdaFunctionForAWSCodePipeline**).
+* For **Role***, select **choose an existing role.**
+* For **Existing role*** select **CodePipelineLambdaExecRole** which we created as part of the Lab 1 setup.
 5. Click **Create Function**
 6. Choose Runtime as **Node.js 6.10** if it is not defaulted.
 7. Then copy the following code into the Lambda function code box
 
-```
+```cmd
 var assert = require('assert');
 var AWS = require('aws-sdk');
 var http = require('http');
@@ -726,6 +726,7 @@ exports.handler = function(event, context) {
 **_Note_** The event object, under the CodePipeline.job key, contains the [job details](http://docs.aws.amazon.com/codepipeline/latest/APIReference/API_JobDetails.html). For a full example of the JSON event AWS CodePipeline returns to Lambda, see [Example JSON Event](http://docs.aws.amazon.com/codepipeline/latest/userguide/actions-invoke-lambda-function.html#actions-invoke-lambda-function-json-event-example).
 
 8. Scroll down to **Basic settings section**, set **Timeout**, type **20** for sec.
+
 9. Scroll up and click  **Save** button.
 
 ***
@@ -740,10 +741,11 @@ In this step, you will add a new stage to your pipeline, and then add an actionâ
 You can also choose to add your Lambda action to an existing stage. For demonstration purposes, we are adding the Lambda function as the only action in a stage to allow you to easily view its progress as artifacts progress through a pipeline.
 
 2. In the **Add action** panel, for **Action category**, choose **Invoke**.
-  - Under **Invoke actions**, for **Action name**, type a name for your Lambda action (for example, **MyLambdaAction**).
-  - For **Provider**, choose **AWS Lambda**.
-  - For **Function name**, choose or type the name of your Lambda function (for example, **MyLambdaFunctionForAWSCodePipeline**).
-  - For **User parameters**, specify the Public DNS address for the Amazon EC2 **DevWebApp01** instance you copied earlier (for example, http://ec2-52-62-36-220.ap-southeast-2.compute.amazonaws.com), and then choose **Add action**.
+- Under **Invoke actions**, for **Action name**, type a name for your Lambda action (for example, **MyLambdaAction**).
+- For **Provider**, choose **AWS Lambda**.
+- For **Function name**, choose or type the name of your Lambda function (for example, **MyLambdaFunctionForAWSCodePipeline**).
+- For **User parameters**, specify the Public DNS address for the Amazon EC2 **DevWebApp01** instance you copied earlier (for example, http://ec2-52-62-36-220.ap-southeast-2.compute.amazonaws.com), and then choose **Add action**.
+
 3. On the **Edit** page, choose **Save pipeline changes**.
 
 ***
@@ -752,12 +754,12 @@ You can also choose to add your Lambda action to an existing stage. For demonstr
 
 To test the function, release the most recent change through the pipeline.
 
-**To use the console to run the most recent version of an artifact through a pipeline**
+**_To use the console to run the most recent version of an artifact through a pipeline_**
 
 1. On the pipeline details page, choose **Release change**. This will run the most recent revision available in each source location specified in a source action through the pipeline.
 2. When the Lambda action is complete, choose the **Details** link to view the log stream for the function in Amazon CloudWatch, including the billed duration of the event. If the function failed, the CloudWatch log will provide information about the cause.
 
-### Summary:
+### Summary
 
 This **concludes Lab 4**. In this lab, we successfully created Lambda function to test our application deployment. Now that you've successfully created a Lambda function and added it as an action in a pipeline, you can modify the Lambda function to check for a different text string.
 
@@ -769,26 +771,26 @@ This **concludes Lab 4**. In this lab, we successfully created Lambda function t
 
 The whole lab activities from lab 1 to 3 in setting up CodeBuild, CodeDeploy and CodePipeline can be managed as code using CloudFormation. You can use the below template as sample to automate the creation.
 
-https://github.com/awslabs/aws-devops-essential/raw/master/templates/aws-pipeline-commit-build-delpoy.template
+<https://github.com/awslabs/aws-devops-essential/raw/master/templates/aws-pipeline-commit-build-delpoy.template>
 
 ### Stage 2: How to integrate other version control services with CodePipeline
 
 Most of the version control systems provide Webhook for integration. Webhooks notify a remote service by issuing an HTTP POST when a commit is pushed to the repository. We can use AWS Lambda to receive the HTTP POST through Amazon API Gateway, and then download a copy of the repository.
 
-The following steps are explained in detail in the blog.https://aws.amazon.com/blogs/devops/integrating-git-with-aws-codepipeline/
+The following steps are explained in detail in the blog.<https://aws.amazon.com/blogs/devops/integrating-git-with-aws-codepipeline/>
 
 ### Stage 3: How to custom build environment for CodeBuild
 
-Follow this blog. https://aws.amazon.com/blogs/devops/extending-aws-codebuild-with-custom-build-environments/
+Follow this blog. <https://aws.amazon.com/blogs/devops/extending-aws-codebuild-with-custom-build-environments/>
 
 ### Stage 4: How to use Jenkins build server to build the project
 
 Follow this tutorial.
-http://docs.aws.amazon.com/codepipeline/latest/userguide/tutorials-four-stage-pipeline.html
+<http://docs.aws.amazon.com/codepipeline/latest/userguide/tutorials-four-stage-pipeline.html>
 
 ***
 
-## Clean up:
+## Clean up
 
 1. Visit [CodePipeline console,](https://console.aws.amazon.com/codepipeline/home) select the created pipeline. Select the Edit and click **Delete**.
 2. Visit [CodeDeploy console,](https://console.aws.amazon.com/codedeploy/home) select the created application. In the next page, click **Delete Application**.
