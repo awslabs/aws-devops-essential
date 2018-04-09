@@ -354,8 +354,8 @@ yum -y install codedeploy-agent.noarch.rpm
 service codedeploy-agent start
 ```
 
-  -You can refer to [this instruction](http://docs.aws.amazon.com/codedeploy/latest/userguide/codedeploy-agent-operations-install.html) to install the CodeDeploy agent for other OSs like Amazon Linux, RHEL, Ubuntu, or Windows.
-  -AWS CodeDeploy can deploy to both Amazon EC2 instances and on-premises instances.To know more [visit](http://docs.aws.amazon.com/codedeploy/latest/userguide/instances.html).
+  - You can refer to [this instruction](http://docs.aws.amazon.com/codedeploy/latest/userguide/codedeploy-agent-operations-install.html) to install the CodeDeploy agent for other OSs like Amazon Linux, RHEL, Ubuntu, or Windows.
+  - AWS CodeDeploy can deploy to both Amazon EC2 instances and on-premises instances.To know more [visit](http://docs.aws.amazon.com/codedeploy/latest/userguide/instances.html).
 
 ***
 
@@ -501,24 +501,31 @@ Also, existing pipeline configuration can be exported and used to create pipelin
 2. On the **Welcome** page, choose **Create pipeline**.
 
 If this is your first time using AWS CodePipeline, an introductory page appears instead of **Welcome**. Choose **Get Started Now**.
+
 3. On the **Step 1: Name** page, in the **Pipeline name** box, type the name for your pipeline, and then choose **Next step**.
 
 Within a single AWS account, each pipeline you create in a region must have a unique name. Names can be reused for pipelines in different regions.
 
 **_Note_**
 After you create a pipeline, you cannot change its name. For information about other limitations, see [Limits in AWS CodePipeline](https://docs.aws.amazon.com/codepipeline/latest/userguide/limits.html).
+
 4. On the **Step 2: Source** page, in the **Source provider** drop-down list, choose the type of repository where your source code is stored and specify its required options:
   - **AWS CodeCommit**: In **Repository name**, choose the name of the AWS CodeCommit repository you created in Lab 1 to use as the source location for your pipeline. In Branch name, from the drop-down list, choose the branch you want to use.
   - After you choose the AWS CodeCommit repository name and branch, a message is displayed in **Change Detection Mode** showing the Amazon CloudWatch Events rule that will be created for this pipeline. Leave default selection. Choose **Next step**.
+
 5. On the **Step 3: Build** page, do the following, and then choose **Next step:**
   - Choose **AWS CodeBuild**, and then **Select** an **existing build project** we created in Lab 1.
   - Then choose **Next step**.
+
 6. On the **Step 4: Deploy** page, do the following, and then choose Next step:
   - Choose the following default providers from the Deployment provider drop-down list:
     + **AWS CodeDeploy:** Type or choose the name of an existing AWS CodeDeploy application in Application name and the name of a deployment group for that application in Deployment group **created in Lab2** and then choose **Next step**.
+
 7. On the **Step 5: Service Role** page, do the following, and then choose **Next step**:
   - In the **Service Role**, drop-down list, choose an IAM service role we **create in Lab 1** for AWS CodePipeline.
+
 8. On the **Step 6: Review** page, review your pipeline configuration, and then choose **Create pipeline** to create the pipeline.
+
 9. Now that you've created your pipeline, you can view it in the console. Pipeline will start automatically in few minutes. Otherwise, test it by manually clicking the **Release** button.
 
 ***
@@ -527,7 +534,7 @@ After you create a pipeline, you cannot change its name. For information about o
 
 1. Run the following to create a deployment group and associates it with the specified application and the user's AWS account. You need to replace the service role ARN we created using roles stack.
 
-```
+```cmd
 aws deploy create-deployment-group --application-name DevOps-WebApp  --deployment-config-name CodeDeployDefault.OneAtATime --deployment-group-name DevOps-WebApp-ProdGroup --ec2-tag-filters Key=Name,Value=ProdWebApp01,Type=KEY_AND_VALUE --service-role-arn <<REPLACE-WITH-YOUR-CODEDEPLOY-ROLE-ARN>>
 ```
 
