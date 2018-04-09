@@ -161,7 +161,7 @@ Provide your Git HTTPs credential when prompted.
   Ensure you are launching it in the same region as your AWS CodeCommit repo.
 
 ```
-aws cloudformation create-stack --stack-name DevopsWorkshop-roles --template-body https://raw.githubusercontent.com/awslabs/aws-devops-essential/master/templates/01-aws-devops-workshop-roles.template --capabilities CAPABILITY_IAM
+aws cloudformation create-stack --stack-name DevopsWorkshop-roles --template-body https://github.com/awslabs/aws-devops-essential/raw/master/templates/01-aws-devops-workshop-roles.template --capabilities CAPABILITY_IAM
 ```
 
 **_Tip_** To learn more about AWS CloudFormation, please refer to [AWS CloudFormation UserGuide.]()
@@ -335,7 +335,7 @@ This **concludes Lab 1**. In this lab, we successfully created repository with v
 1. Run the CloudFormation stack using the following AWS CLI command:
 
 ```
-aws cloudformation create-stack --stack-name DevopsWorkshop-Env --template-url https://raw.githubusercontent.com/awslabs/aws-devops-essential/master/templates/02-aws-devops-workshop-environment-setup.template --capabilities CAPABILITY_IAM
+aws cloudformation create-stack --stack-name DevopsWorkshop-Env --template-url https://github.com/awslabs/aws-devops-essential/raw/master/templates/02-aws-devops-workshop-environment-setup.template --capabilities CAPABILITY_IAM
 ```
 
 **_Note_**
@@ -768,7 +768,7 @@ This **concludes Lab 4**. In this lab, we successfully created Lambda function t
 
 The whole lab activities from lab 1 to 3 in setting up CodeBuild, CodeDeploy and CodePipeline can be managed as code using CloudFormation. You can use the below template as sample to automate the creation.
 
-https://raw.githubusercontent.com/awslabs/aws-devops-essential/master/templates/aws-pipeline-commit-build-delpoy.template
+https://github.com/awslabs/aws-devops-essential/raw/master/templates/aws-pipeline-commit-build-delpoy.template
 
 ### Stage 2: How to integrate other version control services with CodePipeline
 
