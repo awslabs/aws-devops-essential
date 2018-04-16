@@ -635,7 +635,7 @@ This **concludes Lab 3**. In this lab, we successfully created CodePipeline for 
 Cloud9 will create a local Lambda function named MyLambdaFunctionForAWSCodePipeline.
 11. Then **copy** the following code into the Lambda function index.js and **save** it.
 
-```cmd
+```js
 var assert = require('assert');
 var AWS = require('aws-sdk');
 var http = require('http');
