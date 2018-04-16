@@ -99,10 +99,10 @@ Keep an open scratch pad in Cloud9 or a text editor on your local computer for n
 
 ### Stage 2: Clone the Repo
 
-In this step, you will connect to the source repository created in the previous step. To do this, you select a directory on your local machine that represents the local repo. You use Git to clone and initialize a copy of your empty AWS CodeCommit repository inside of that directory. Then you specify the user name and email address used to annotate your commits.
+In this step, you will connect to the source repository created in the previous step. Here, you use Git to clone and initialize a copy of your empty AWS CodeCommit repository. Then you specify the user name and email address used to annotate your commits.
 
-1. Go to Cloud9 IDE terminal prompt
-2. In the region selector, choose the region where the repository was created. Repositories are specific to an AWS region.
+1. From CodeCommit Console, you can get the **https clone url** link for your repo.
+2. Go to Cloud9 IDE terminal prompt
 3. Run git clone to pull down a copy of the repository into the local repo:
 
 ```cmd
@@ -179,7 +179,7 @@ aws cloudformation create-stack --stack-name DevopsWorkshop-roles --template-bod
   "name": "devops-webapp-project",
   "source": {
     "type": "CODECOMMIT",
-    "location": "https://git-codecommit.<<YOUR-REGION-ID>>.amazonaws.com/v1/repos/<<YOUR-REPO-NAME>>"
+    "location": "https://git-codecommit.<<YOUR-REGION-ID>>.amazonaws.com/v1/repos/WebAppRepo"
   },
   "artifacts": {
     "type": "S3",
@@ -192,7 +192,7 @@ aws cloudformation create-stack --stack-name DevopsWorkshop-roles --template-bod
     "image": "aws/codebuild/java:openjdk-8",
     "computeType": "BUILD_GENERAL1_SMALL"
   },
-  "serviceRole": "<<BuildRoleArn-FROM-CLOUDFORMATION-OUTPUT>>"
+  "serviceRole": "<<BuildRoleArn-Value-FROM-CLOUDFORMATION-OUTPUT>>"
 }
 ```
 
@@ -338,7 +338,7 @@ This **concludes Lab 1**. In this lab, we successfully created repository with v
 1. Run the CloudFormation stack using the following AWS CLI command:
 
 ```
-aws cloudformation create-stack --stack-name DevopsWorkshop-Env --template-url https://github.com/awslabs/aws-devops-essential/raw/master/templates/02-aws-devops-workshop-environment-setup.template --capabilities CAPABILITY_IAM
+aws cloudformation create-stack --stack-name DevopsWorkshop-Env --template-body https://github.com/awslabs/aws-devops-essential/raw/master/templates/02-aws-devops-workshop-environment-setup.template --capabilities CAPABILITY_IAM
 ```
 
 **_Note_**
@@ -621,16 +621,19 @@ This **concludes Lab 3**. In this lab, we successfully created CodePipeline for 
 
 ### Stage 1: Create a sample Lambda function
 
-1. Sign in to the AWS Management Console and open the AWS Lambda console at https://console.aws.amazon.com/lambda/.
-2. On the **Lambda** console page, choose **Create a function**.
-3. On the **Blueprints** page, choose **Author from scratch**.
-4. On the **Basic information section** page
-* For **Name***, type a name for your Lambda function (for example, **MyLambdaFunctionForAWSCodePipeline**).
-* For **Role***, select **choose an existing role.**
-* For **Existing role*** select **CodePipelineLambdaExecRole** which we created as part of the Lab 1 setup.
-5. Click **Create Function**
-6. Choose Runtime as **Node.js 6.10** if it is not defaulted.
-7. Then copy the following code into the Lambda function code box
+1. Go to Cloud9 IDE
+2. On the right hand side-menu, select **AWS Resources**
+3. Expand Lambda, and select **Î»+** [Create a lambda function]
+4. Enter Function Name as **MyLambdaFunctionForAWSCodePipeline**
+5. Click **Next**
+6. Select runtime as **Node.js 6.10** and blue print as **empty-nodejs**
+7. Click **Next**
+8. Select Function trigger as **None** and click **Next**
+9. For Role, select **choose an existing role** and select **CodePipelineLambdaExecRole** which we created as part of the Lab 1 setup.
+10. Click **Next** and preview the changes. Once done, click **Finish**.
+**Note:**
+Cloud9 will create a local Lambda function named MyLambdaFunctionForAWSCodePipeline.
+11. Then **copy** the following code into the Lambda function index.js and **save** it.
 
 ```cmd
 var assert = require('assert');
@@ -730,11 +733,9 @@ exports.handler = function(event, context) {
 };
 ```
 
-**_Note_** The event object, under the CodePipeline.job key, contains the [job details](http://docs.aws.amazon.com/codepipeline/latest/APIReference/API_JobDetails.html). For a full example of the JSON event AWS CodePipeline returns to Lambda, see [Example JSON Event](http://docs.aws.amazon.com/codepipeline/latest/userguide/actions-invoke-lambda-function.html#actions-invoke-lambda-function-json-event-example).
-
-8. Scroll down to **Basic settings section**, set **Timeout**, type **20** for sec.
-
-9. Scroll up and click  **Save** button.
+12. Lets deploy the modified function by select the deploy button as shown below.
+![lambda-deploy](./img/lambda-deploy.png)
+13. Review the deployment changes by visiting the Lambda console. <https://console.aws.amazon.com/lambda>
 
 ***
 
@@ -745,7 +746,7 @@ In this step, you will add a new stage to your pipeline, and then add an actionâ
 1. **Edit** the pipeline. Choose the option to add a stage after the **Staging** stage with the AWS CodeDeploy action. Type a name for the stage (for example, **LambdaTest**), and then choose the option to add an action to the stage.
 
 **_Note_**
-You can also choose to add your Lambda action to an existing stage. For demonstration purposes, we are adding the Lambda function as the only action in a stage to allow you to easily view its progress as artifacts progress through a pipeline.
+You can also choose to add your Lambda action to an existing stage. For demonstration purposes, we are adding the Lambda function as the only action in a stage to allow you to easily view its progress as artifacts progress through a pipeline. The event object, under the CodePipeline.job key, contains the [job details](http://docs.aws.amazon.com/codepipeline/latest/APIReference/API_JobDetails.html). For a full example of the JSON event AWS CodePipeline returns to Lambda, see [Example JSON Event](http://docs.aws.amazon.com/codepipeline/latest/userguide/actions-invoke-lambda-function.html#actions-invoke-lambda-function-json-event-example).
 
 2. In the **Add action** panel, for **Action category**, choose **Invoke**.
 - Under **Invoke actions**, for **Action name**, type a name for your Lambda action (for example, **MyLambdaAction**).
