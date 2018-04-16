@@ -733,7 +733,7 @@ exports.handler = function(event, context) {
 };
 ```
 
-12. Lets deploy the modified function by select the deploy button as shown below.
+12. Lets deploy the modified function by clicking the deploy button as shown below.
 ![lambda-deploy](./img/lambda-deploy.png)
 13. Review the deployment changes by visiting the Lambda console. <https://console.aws.amazon.com/lambda>
 
