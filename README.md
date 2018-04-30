@@ -145,13 +145,19 @@ git commit -m "Initial Commit"
 
 **_💡 Tip_** To see details about the commit you just made, run **_git log_**.
 
-5. Run **_git push_** to push your commit through the default remote name Git uses for your AWS CodeCommit repository (origin), from the default branch in your local repo (master):
+5. Run **_git config credential_** to store the credential.
+
+```cmd
+git config credential.helper store
+```
+
+6. Run **_git push_** to push your commit through the default remote name Git uses for your AWS CodeCommit repository (origin), from the default branch in your local repo (master):
 
 ```cmd
 git push -u origin master
 ```
 
-Provide your Git HTTPs credential when prompted.
+Provide your Git HTTPs credential when prompted. Credential helper will store it, hence you won't be asked again for subsequent push.
 
 **_💡 Tip_** After you have pushed files to your AWS CodeCommit repository, you can use the AWS CodeCommit console to view the contents. For more information, see [Browse the Contents of a Repository](http://docs.aws.amazon.com/codecommit/latest/userguide/how-to-browse.html).
 
@@ -775,7 +781,7 @@ This **concludes Lab 4**. In this lab, we successfully created Lambda function t
 
 ## ✅ Additional Exercise
 
-### Stage 1: Pipeline + Infrastrture as code
+### Stage 1: Pipeline + Infrastructure as code
 
 The whole lab activities from lab 1 to 3 in setting up CodeBuild, CodeDeploy and CodePipeline can be managed as code using CloudFormation. You can use the below template as sample to automate the creation.
 
