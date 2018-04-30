@@ -752,7 +752,7 @@ You can also choose to add your Lambda action to an existing stage. For demonstr
 - Under **Invoke actions**, for **Action name**, type a name for your Lambda action (for example, **MyLambdaAction**).
 - For **Provider**, choose **AWS Lambda**.
 - For **Function name**, choose or type the name of your Lambda function (for example, **MyLambdaFunctionForAWSCodePipeline**).
-- For **User parameters**, specify the Public DNS address for the Amazon EC2 **DevWebApp01** instance you copied earlier (for example, http://ec2-52-62-36-220.ap-southeast-2.compute.amazonaws.com), and then choose **Add action**.
+- For **User parameters**, specify **http://** and the Public DNS address for the Amazon EC2 **DevWebApp01** instance you copied earlier (for example, http://ec2-52-62-36-220.ap-southeast-2.compute.amazonaws.com), and then choose **Add action**.
 
 3. On the **Edit** page, choose **Save pipeline changes**.
 
