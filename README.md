@@ -532,7 +532,13 @@ After you create a pipeline, you cannot change its name. For information about o
 
 8. On the **Step 6: Review** page, review your pipeline configuration, and then choose **Create pipeline** to create the pipeline.
 
+Image below shows successfully created pipeline.
+![pipeline-complete](./img/Lab3-Stage1-Complete.PNG)
+
 9. Now that you've created your pipeline, you can view it in the console. Pipeline will start automatically in few minutes. Otherwise, test it by manually clicking the **Release** button.
+
+Image below shows successfully executed pipeline.
+![pipeline-released](./img/Lab3-Stage1-Complete-released.PNG)
 
 ***
 
@@ -564,6 +570,7 @@ We will edit the pipeline to add the stage for production deployment and introdu
 8. Choose **Add Action**.
 9. Finally, save changes by clicking **Save pipeline changes** button.
 
+![pipeline-edit](./img/Lab3-Stage3-Editing.PNG)
 ***
 
 ### Stage 4: Add Manual approval action
@@ -585,6 +592,8 @@ aws sns subscribe --topic-arn <<YOUR-TOPIC-ARN>> --protocol email --notification
 ```
 
 3. An Email would be sent for **confirmation** on the subscription. **Acknowledge** the subscription to receive mails from topic.
+
+![pipeline-edit](./img/Lab4-Stage4-Step3-Confirm-MustDoOrErrorOccurs.PNG)
 4. Choose **+ Stage** at the point in the pipeline **between Staging** and **Prod** stage, and type a name for the stage.
 5. Choose the **+ action icon**.
 6. On the **Add action** page, do the following:
@@ -609,6 +618,11 @@ If you receive a notification that includes a direct link to an approval action,
 5. If a URL was provided, choose the **Manual approval** link in the action to open the target Web page, and then review the content.
 6. Return to the pipeline details view, and then choose the **Review** button.
 7. In the **Approve or reject** the revision window, type comments related to your review, such as why you are approving or rejecting the action, and then choose the **Approve** or **Reject** button.
+
+![pipeline-edit](./img/Lab4-Stage5-ApprovalPipeline.PNG)
+
+Once you approve, the pipeline continues and completes successfully.
+![pipeline-edit](./img/Lab4-CompletePipeline.png)
 
 ### Summary
 
