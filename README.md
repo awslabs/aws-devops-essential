@@ -56,21 +56,21 @@ Take a moment now and setup your Cloud9 development environment.
 7. Review the environment settings and click **Create environment**. It will take several minutes for your environment to be provisioned and prepared.
 8. Once ready, your IDE will open to a welcome screen. Below that, you should see a terminal prompt similar to: ![setup](./img/setup-cloud9-terminal.png) You can run AWS CLI commands in here just like you would on your local computer. Verify that your user is logged in by running `aws sts get-caller-identity`.
 
-```cmd
-aws sts get-caller-identity
+```console
+user:~/environment $ aws sts get-caller-identity
 ```
 
 You'll see output indicating your account and user information:
 
-```cmd
-Admin:~/environment $ aws sts get-caller-identity
+```console
+user:~/environment $ aws sts get-caller-identity
 ```
 
-```cmd
+```console
 {
     "Account": "123456789012",
     "UserId": "AKIAI44QH8DHBEXAMPLE",
-    "Arn": "arn:aws:iam::123456789012:user/Alice"
+    "Arn": "arn:aws:iam::123456789012:user/user"
 }
 ```
 
@@ -105,8 +105,8 @@ In this step, you will connect to the source repository created in the previous 
 2. Go to Cloud9 IDE terminal prompt
 3. Run git clone to pull down a copy of the repository into the local repo:
 
-```cmd
-git clone https://git-codecommit.<YOUR-REGION>.amazonaws.com/v1/repos/WebAppRepo
+```console
+user:~/environment $ git clone https://git-codecommit.<YOUR-REGION>.amazonaws.com/v1/repos/WebAppRepo
 
 ```
 
@@ -118,43 +118,43 @@ Provide your Git HTTPs credential when prompted. You would be seeing the followi
 
 1. Download the Sample Web App Archive by running the following command from IDE terminal.
 
-```cmd
-wget https://github.com/awslabs/aws-devops-essential/raw/master/sample-app/Web-App-Archive.zip
+```console
+user:~/environment $ wget https://github.com/awslabs/aws-devops-essential/raw/master/sample-app/Web-App-Archive.zip
 ```
 
 2. Unarchive and copy all the **_contents_** of the unarchived folder to your local repo folder.
 
-```cmd
-unzip Web-App-Archive.zip
-mv -v Web-App-Archive/* WebAppRepo/
+```console
+user:~/environment $ unzip Web-App-Archive.zip
+user:~/environment $ mv -v Web-App-Archive/* WebAppRepo/
 ```
 
 After moving the files, your local repo should like the one below. ![cloud9](./img/Cloud9-IDE-Screen-Sample.png)
 3. Change the directory to your local repo folder. Run **_git add_** to stage the change:
 
-```cmd
-cd WebAppRepo
-git add *
+```console
+user:~/environment $ cd WebAppRepo
+user:~/environment/WebAppRepo/ $ git add *
 ```
 
 4. Run **_git commit_** to commit the change:
 
-```cmd
-git commit -m "Initial Commit"
+```console
+user:~/environment//WebAppRepo/ $ git commit -m "Initial Commit"
 ```
 
 **_💡 Tip_** To see details about the commit you just made, run **_git log_**.
 
 5. Run **_git config credential_** to store the credential.
 
-```cmd
-git config credential.helper store
+```console
+user:~/environment/WebAppRepo/ $ git config credential.helper store
 ```
 
 6. Run **_git push_** to push your commit through the default remote name Git uses for your AWS CodeCommit repository (origin), from the default branch in your local repo (master):
 
-```cmd
-git push -u origin master
+```console
+user:~/environment/WebAppRepo/ $ git push -u origin master
 ```
 
 Provide your Git HTTPs credential when prompted. Credential helper will store it, hence you won't be asked again for subsequent push.
@@ -168,8 +168,8 @@ Provide your Git HTTPs credential when prompted. Credential helper will store it
 1. First, let us create the necessary roles required to finish labs. Run the CloudFormation stack to create service roles.
   Ensure you are launching it in the same region as your AWS CodeCommit repo.
 
-```cmd
-aws cloudformation create-stack --stack-name DevopsWorkshop-roles --template-body https://github.com/awslabs/aws-devops-essential/raw/master/templates/01-aws-devops-workshop-roles.template --capabilities CAPABILITY_IAM
+```console
+user:~/environment/WebAppRepo (master) $ aws cloudformation create-stack --stack-name DevopsWorkshop-roles --template-body https://github.com/awslabs/aws-devops-essential/raw/master/templates/01-aws-devops-workshop-roles.template --capabilities CAPABILITY_IAM
 ```
 
 **_Tip_** To learn more about AWS CloudFormation, please refer to [AWS CloudFormation UserGuide.](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/Welcome.html)
