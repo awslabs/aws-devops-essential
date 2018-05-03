@@ -169,7 +169,9 @@ Provide your Git HTTPs credential when prompted. Credential helper will store it
   Ensure you are launching it in the same region as your AWS CodeCommit repo.
 
 ```console
-user:~/environment/WebAppRepo (master) $ aws cloudformation create-stack --stack-name DevopsWorkshop-roles --template-body https://github.com/awslabs/aws-devops-essential/raw/master/templates/01-aws-devops-workshop-roles.template --capabilities CAPABILITY_IAM
+user:~/environment/WebAppRepo (master) $ aws cloudformation create-stack --stack-name DevopsWorkshop-roles \
+--template-body https://github.com/awslabs/aws-devops-essential/raw/master/templates/01-aws-devops-workshop-roles.template \
+--capabilities CAPABILITY_IAM
 ```
 
 **_Tip_** To learn more about AWS CloudFormation, please refer to [AWS CloudFormation UserGuide.](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/Welcome.html)
@@ -344,7 +346,9 @@ This **concludes Lab 1**. In this lab, we successfully created repository with v
 1. Run the CloudFormation stack using the following AWS CLI command:
 
 ```console
-user:~/environment/WebAppRepo (master) $ aws cloudformation create-stack --stack-name DevopsWorkshop-Env --template-body https://github.com/awslabs/aws-devops-essential/raw/master/templates/02-aws-devops-workshop-environment-setup.template --capabilities CAPABILITY_IAM
+user:~/environment/WebAppRepo (master) $ aws cloudformation create-stack --stack-name DevopsWorkshop-Env \
+--template-body https://github.com/awslabs/aws-devops-essential/raw/master/templates/02-aws-devops-workshop-environment-setup.template \
+--capabilities CAPABILITY_IAM
 ```
 
 **_Note_**
@@ -391,7 +395,11 @@ user:~/environment/WebAppRepo (master) $ aws deploy create-application --applica
 2. Run the following to create a deployment group and associates it with the specified application and the user's AWS account. You need to replace the service role with **DeployRoleArn Value** we created using roles CFN stack.
 
 ```console
-user:~/environment/WebAppRepo (master) $ aws deploy create-deployment-group --application-name DevOps-WebApp  --deployment-config-name CodeDeployDefault.OneAtATime --deployment-group-name DevOps-WebApp-BetaGroup --ec2-tag-filters Key=Name,Value=DevWebApp01,Type=KEY_AND_VALUE --service-role-arn <<REPLACE-WITH-YOUR-CODEDEPLOY-ROLE-ARN>>
+user:~/environment/WebAppRepo (master) $ aws deploy create-deployment-group --application-name DevOps-WebApp \
+--deployment-config-name CodeDeployDefault.OneAtATime \
+--deployment-group-name DevOps-WebApp-BetaGroup \
+--ec2-tag-filters Key=Name,Value=DevWebApp01,Type=KEY_AND_VALUE \
+--service-role-arn <<REPLACE-WITH-YOUR-CODEDEPLOY-ROLE-ARN>>
 ```
 
 **_Note:_** We are using the tags to attach instances to the deployment group.
@@ -477,7 +485,8 @@ user:~/environment/WebAppRepo (master) $ aws codebuild start-build --project-nam
 3. Get the **_eTag_** for the object **WebAppOutputArtifact.zip** uploaded to S3 bucket. You can get etag by visiting S3 console. Or, executing the following command.
 
 ```console
-user:~/environment/WebAppRepo (master) $ aws s3api head-object --bucket <<YOUR-CODEBUILD-OUTPUT-BUCKET>> --key WebAppOutputArtifact.zip
+user:~/environment/WebAppRepo (master) $ aws s3api head-object --bucket <<YOUR-CODEBUILD-OUTPUT-BUCKET>> \
+--key WebAppOutputArtifact.zip
 
 ```
 
@@ -488,7 +497,10 @@ As a sample S3 properties console showing etag below:
 4. Run the following to create a deployment. **_Replace_** <<YOUR-CODEBUILD-OUTPUT-BUCKET>> with your **_S3 bucket name_** created in Lab 1. Also, update the **_eTag_** based on previous step.
 
 ```console
-user:~/environment/WebAppRepo (master) $ aws deploy create-deployment --application-name DevOps-WebApp --deployment-group-name DevOps-WebApp-BetaGroup --description "My very first deployment" --s3-location bucket=<<YOUR-CODEBUILD-OUTPUT-BUCKET>>,key=WebAppOutputArtifact.zip,bundleType=zip,eTag=<<YOUR-ETAG-VALUE>>
+user:~/environment/WebAppRepo (master) $ aws deploy create-deployment --application-name DevOps-WebApp \
+--deployment-group-name DevOps-WebApp-BetaGroup \
+--description "My very first deployment" \
+--s3-location bucket=<<YOUR-CODEBUILD-OUTPUT-BUCKET>>,key=WebAppOutputArtifact.zip,bundleType=zip,eTag=<<YOUR-ETAG-VALUE>>
 ```
 
 5. **Verify** the deployment status by visiting the **CodeDeploy console**.
@@ -562,7 +574,11 @@ Image below shows successfully executed pipeline.
 1. Run the following to create a deployment group and associates it with the specified application and the user's AWS account. You need to replace the service role ARN we created using roles stack.
 
 ```console
-user:~/environment $ aws deploy create-deployment-group --application-name DevOps-WebApp  --deployment-config-name CodeDeployDefault.OneAtATime --deployment-group-name DevOps-WebApp-ProdGroup --ec2-tag-filters Key=Name,Value=ProdWebApp01,Type=KEY_AND_VALUE --service-role-arn <<REPLACE-WITH-YOUR-CODEDEPLOY-ROLE-ARN>>
+user:~/environment $ aws deploy create-deployment-group --application-name DevOps-WebApp  \
+--deployment-config-name CodeDeployDefault.OneAtATime \
+--deployment-group-name DevOps-WebApp-ProdGroup \
+--ec2-tag-filters Key=Name,Value=ProdWebApp01,Type=KEY_AND_VALUE \
+--service-role-arn <<REPLACE-WITH-YOUR-CODEDEPLOY-ROLE-ARN>>
 ```
 
 **_Note:_** We are using the different group name and Production tag to attach instance to the deployment group.
@@ -603,7 +619,9 @@ user:~/environment $ aws sns create-topic --name WebApp-Approval-Topic
 2. **Subscribe** to the topic using your email id. **Replace** the **ARN** and **email id** placeholders accordingly.
 
 ```console
-user:~/environment $ aws sns subscribe --topic-arn <<YOUR-TOPIC-ARN>> --protocol email --notification-endpoint <<YOUR-EMAIL-ID>>
+user:~/environment $ aws sns subscribe --topic-arn <<YOUR-TOPIC-ARN>> \
+--protocol email \
+--notification-endpoint <<YOUR-EMAIL-ID>>
 ```
 
 3. An Email would be sent for **confirmation** on the subscription. **Acknowledge** the subscription to receive mails from topic.
