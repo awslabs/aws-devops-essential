@@ -140,7 +140,7 @@ user:~/environment/WebAppRepo/ $ git add *
 4. Run **_git commit_** to commit the change:
 
 ```console
-user:~/environment//WebAppRepo/ $ git commit -m "Initial Commit"
+user:~/environment/WebAppRepo/ $ git commit -m "Initial Commit"
 ```
 
 **_💡 Tip_** To see details about the commit you just made, run **_git log_**.
@@ -204,8 +204,8 @@ user:~/environment/WebAppRepo (master) $ aws cloudformation create-stack --stack
 
 5. Switch to the directory that contains the file you just saved, and run the **_create-project_** command:
 
-```cmd
-aws codebuild create-project --cli-input-json file://create-project.json
+```console
+user:~/environment/WebAppRepo (master) $ aws codebuild create-project --cli-input-json file://create-project.json
 ```
 
 6. Sample output JSON for your reference
@@ -305,8 +305,8 @@ As a sample shown below:
 
 2. Run the **_start-build_** command:
 
-```cmd
-aws codebuild start-build --project-name devops-webapp-project
+```console
+user:~/environment/WebAppRepo (master) $ aws codebuild start-build --project-name devops-webapp-project
 ```
 
 **_Note:_** You can start build with more advance configuration setting via JSON. If you are interested to learn more about it, please visit [here](http://docs.aws.amazon.com/codebuild/latest/userguide/run-build.html#run-build-cli).
@@ -314,8 +314,8 @@ aws codebuild start-build --project-name devops-webapp-project
 3. If successful, data would appear showing successful submission. Make a note of the build id value. You will need it in the next step.
 4. In this step, you will view summarized information about the status of your build.
 
-```cmd
-aws codebuild batch-get-builds --ids <<ID>>
+```console
+user:~/environment/WebAppRepo (master) $ aws codebuild batch-get-builds --ids <<ID>>
 ```
 
 **_Note:_** Replace <<ID>> with the id value that appeared in the output of the previous step.
@@ -343,15 +343,15 @@ This **concludes Lab 1**. In this lab, we successfully created repository with v
 
 1. Run the CloudFormation stack using the following AWS CLI command:
 
-```
-aws cloudformation create-stack --stack-name DevopsWorkshop-Env --template-body https://github.com/awslabs/aws-devops-essential/raw/master/templates/02-aws-devops-workshop-environment-setup.template --capabilities CAPABILITY_IAM
+```console
+user:~/environment/WebAppRepo (master) $ aws cloudformation create-stack --stack-name DevopsWorkshop-Env --template-body https://github.com/awslabs/aws-devops-essential/raw/master/templates/02-aws-devops-workshop-environment-setup.template --capabilities CAPABILITY_IAM
 ```
 
 **_Note_**
   - The Stack will have a VPC w/ 1 public subnet, an IGW, route tables, ACL, 2 EC2 instances. Also, the EC2 instances will be launched with a User Data script to **automatically install the AWS CodeDeploy agent**.
   - **Verify** that by visiting the **EC2 Console** and view option for **user data**.You would see the following script.
 
-```cmd
+```console
 #!/bin/bash -ex
 yum install -y aws-cli
 cd /home/ec2-user/
@@ -369,14 +369,14 @@ service codedeploy-agent start
 
 1. Run the following to create an application for CodeDeploy.
 
-```cmd
-aws deploy create-application --application-name DevOps-WebApp
+```console
+user:~/environment/WebAppRepo (master) $ aws deploy create-application --application-name DevOps-WebApp
 ```
 
 2. Run the following to create a deployment group and associates it with the specified application and the user's AWS account. You need to replace the service role with **DeployRoleArn Value** we created using roles CFN stack.
 
-```cmd
-aws deploy create-deployment-group --application-name DevOps-WebApp  --deployment-config-name CodeDeployDefault.OneAtATime --deployment-group-name DevOps-WebApp-BetaGroup --ec2-tag-filters Key=Name,Value=DevWebApp01,Type=KEY_AND_VALUE --service-role-arn <<REPLACE-WITH-YOUR-CODEDEPLOY-ROLE-ARN>>
+```console
+user:~/environment/WebAppRepo (master) $ aws deploy create-deployment-group --application-name DevOps-WebApp  --deployment-config-name CodeDeployDefault.OneAtATime --deployment-group-name DevOps-WebApp-BetaGroup --ec2-tag-filters Key=Name,Value=DevWebApp01,Type=KEY_AND_VALUE --service-role-arn <<REPLACE-WITH-YOUR-CODEDEPLOY-ROLE-ARN>>
 ```
 
 **_Note:_** We are using the tags to attach instances to the deployment group.
@@ -454,15 +454,15 @@ artifacts:
 
 1. Run the **_start-build_** command:
 
-```cmd
-aws codebuild start-build --project-name devops-webapp-project
+```console
+user:~/environment/WebAppRepo (master) $ aws codebuild start-build --project-name devops-webapp-project
 ```
 
 2. Visit the CodeBuild Console to ensure build is successful. Upon successful completion of build, we should see new **_WebAppOutputArtifact.zip_** upload to the configured CodeBuild S3 Bucket.
 3. Get the **_eTag_** for the object **WebAppOutputArtifact.zip** uploaded to S3 bucket. You can get etag by visiting S3 console. Or, executing the following command.
 
-```cmd
-aws s3api head-object --bucket <<YOUR-CODEBUILD-OUTPUT-BUCKET>> --key WebAppOutputArtifact.zip
+```console
+user:~/environment/WebAppRepo (master) $ aws s3api head-object --bucket <<YOUR-CODEBUILD-OUTPUT-BUCKET>> --key WebAppOutputArtifact.zip
 
 ```
 
@@ -472,8 +472,8 @@ As a sample S3 properties console showing etag below:
 
 4. Run the following to create a deployment. **_Replace_** <<YOUR-CODEBUILD-OUTPUT-BUCKET>> with your **_S3 bucket name_** created in Lab 1. Also, update the **_eTag_** based on previous step.
 
-```cmd
-aws deploy create-deployment --application-name DevOps-WebApp --deployment-group-name DevOps-WebApp-BetaGroup --description "My very first deployment" --s3-location bucket=<<YOUR-CODEBUILD-OUTPUT-BUCKET>>,key=WebAppOutputArtifact.zip,bundleType=zip,eTag=<<YOUR-ETAG-VALUE>>
+```console
+user:~/environment/WebAppRepo (master) $ aws deploy create-deployment --application-name DevOps-WebApp --deployment-group-name DevOps-WebApp-BetaGroup --description "My very first deployment" --s3-location bucket=<<YOUR-CODEBUILD-OUTPUT-BUCKET>>,key=WebAppOutputArtifact.zip,bundleType=zip,eTag=<<YOUR-ETAG-VALUE>>
 ```
 
 5. **Verify** the deployment status by visiting the **CodeDeploy console**.
@@ -546,8 +546,8 @@ Image below shows successfully executed pipeline.
 
 1. Run the following to create a deployment group and associates it with the specified application and the user's AWS account. You need to replace the service role ARN we created using roles stack.
 
-```cmd
-aws deploy create-deployment-group --application-name DevOps-WebApp  --deployment-config-name CodeDeployDefault.OneAtATime --deployment-group-name DevOps-WebApp-ProdGroup --ec2-tag-filters Key=Name,Value=ProdWebApp01,Type=KEY_AND_VALUE --service-role-arn <<REPLACE-WITH-YOUR-CODEDEPLOY-ROLE-ARN>>
+```console
+user:~/environment $ aws deploy create-deployment-group --application-name DevOps-WebApp  --deployment-config-name CodeDeployDefault.OneAtATime --deployment-group-name DevOps-WebApp-ProdGroup --ec2-tag-filters Key=Name,Value=ProdWebApp01,Type=KEY_AND_VALUE --service-role-arn <<REPLACE-WITH-YOUR-CODEDEPLOY-ROLE-ARN>>
 ```
 
 **_Note:_** We are using the different group name and Production tag to attach instance to the deployment group.
@@ -581,14 +581,14 @@ If the action is approved, the pipeline execution resumes. If the action is reje
 
 1. **Create SNS topic** for Approval notification. And note the **topic ARN** from the result.
 
-```cmd
-aws sns create-topic --name WebApp-Approval-Topic
+```console
+user:~/environment $ aws sns create-topic --name WebApp-Approval-Topic
 ```
 
 2. **Subscribe** to the topic using your email id. **Replace** the **ARN** and **email id** placeholders accordingly.
 
-```cmd
-aws sns subscribe --topic-arn <<YOUR-TOPIC-ARN>> --protocol email --notification-endpoint <<YOUR-EMAIL-ID>>
+```console
+user:~/environment $ aws sns subscribe --topic-arn <<YOUR-TOPIC-ARN>> --protocol email --notification-endpoint <<YOUR-EMAIL-ID>>
 ```
 
 3. An Email would be sent for **confirmation** on the subscription. **Acknowledge** the subscription to receive mails from topic.
