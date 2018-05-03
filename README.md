@@ -359,7 +359,22 @@ wget https://aws-codedeploy-us-east-1.s3.amazonaws.com/latest/codedeploy-agent.n
 yum -y install codedeploy-agent.noarch.rpm
 service codedeploy-agent start
 ```
+  - **Verify** in **System Log** by clicking Instance Settings->Get System Log for below entries
+  
+  ```shell
+Check if there is a codedeployagent config file.
+Start codedeploy-agent in post hook if this is a first install.
+Installing codedeploy-agent auto-update cron in '/etc/cron.d/codedeploy-agent-update'...
+Installing codedeploy-agent auto-update cron in '/etc/cron.d/codedeploy-agent-update'...Complete
+  Verifying  : codedeploy-agent-1.0-1.1458.noarch                           1/1 
 
+Installed:
+  codedeploy-agent.noarch 0:1.0-1.1458                                          
+
+Complete!
++ service codedeploy-agent start
+  ```
+  
   - You can refer to [this instruction](http://docs.aws.amazon.com/codedeploy/latest/userguide/codedeploy-agent-operations-install.html) to install the CodeDeploy agent for other OSs like Amazon Linux, RHEL, Ubuntu, or Windows.
   - AWS CodeDeploy can deploy to both Amazon EC2 instances and on-premises instances.To know more [visit](http://docs.aws.amazon.com/codedeploy/latest/userguide/instances.html).
 
