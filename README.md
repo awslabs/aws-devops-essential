@@ -296,7 +296,7 @@ phases:
 artifacts:
   files:
     - target/javawebdemo.war
-  discard-paths: yes
+  discard-paths: no
 ```
 
 As a sample shown below:
@@ -503,10 +503,12 @@ user:~/environment/WebAppRepo (master) $ aws deploy create-deployment --applicat
 --s3-location bucket=<<YOUR-CODEBUILD-OUTPUT-BUCKET>>,key=WebAppOutputArtifact.zip,bundleType=zip,eTag=<<YOUR-ETAG-VALUE>>
 ```
 
-5. **Verify** the deployment status by visiting the **CodeDeploy console**.
-6. Check the deploy console for status. if the deployment failed, then look at the error message and correct the deployment issue.
-7. if the status of deployment is success, we should be able to view the web application deployed successfully to the EC2 server namely **_DevWebApp01_**
-8. Go to the **EC2 Console**, get the **public DNS name** of the server and open the url in a browser. You should see a sample web application.
+5. **Confirm** via IAM Roles, if associated EC2 instance has appropriate permissions to read from bucket specified above. If not, you will get Access Denied at the DownloadBundle step during deployment.
+
+6. **Verify** the deployment status by visiting the **CodeDeploy console**.
+7. Check the deploy console for status. if the deployment failed, then look at the error message and correct the deployment issue.
+8. if the status of deployment is success, we should be able to view the web application deployed successfully to the EC2 server namely **_DevWebApp01_**
+9. Go to the **EC2 Console**, get the **public DNS name** of the server and open the url in a browser. You should see a sample web application.
 
 ### Summary
 
