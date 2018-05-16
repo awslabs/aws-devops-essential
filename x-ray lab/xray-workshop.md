@@ -1,6 +1,5 @@
 Enabling X-Ray for JSP Tomcat application
 ![GitHub Logo](img/xrayservicemap.png)
-Format: ![X-Ray Service Map](img/xrayservicemap.png)
 
 1. If you use Maven or Gradle to build your application, add the <a href=“https://docs.aws.amazon.com/xray/latest/devguide/xray-sdk-java.html#xray-sdk-java-dependencies”> X-Ray SDK for Java to your build configuration</a>.
 
@@ -50,12 +49,9 @@ Add in your WEB-INF/web.xml
 
 ### X-Ray latency histogram
 ![GitHub Logo](img/xraylatencyhistogram.png)
-Format: ![X-Ray Latency Histogram](img/xraylatencyhistogram.png)
 
 ### X-Ray trace timeline
 ![GitHub Logo](img/xraytracetimeline.png)
-Format: ![X-Ray Latency Histogram](img/xraytracetimeline.png)
 
 ### X-Ray trace detailed
 ![GitHub Logo](img/xraytracedetailed.png)
-Format: ![X-Ray Latency Histogram](img/xraytracedetailed.png)
