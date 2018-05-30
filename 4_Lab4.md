@@ -155,7 +155,7 @@ This **concludes Lab 4**. In this lab, we successfully created Lambda function t
 
 You can now proceed to cleanup all the resources
 
-[Cleanup](README.md#CleanUp)
+[Cleanup](README.md#clean-up)
 
 ***
 
