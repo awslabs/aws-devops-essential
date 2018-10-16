@@ -165,7 +165,7 @@ You can now proceed to cleanup all the resources
 
 The whole lab activities from lab 1 to 3 in setting up CodeBuild, CodeDeploy and CodePipeline can be managed as code using CloudFormation. You can use the below template as sample to automate the creation.
 
-<https://github.com/awslabs/aws-devops-essential/raw/master/templates/aws-pipeline-commit-build-delpoy.template>
+<https://github.com/awslabs/aws-devops-essential/raw/master/templates/aws-pipeline-commit-build-deploy.template>
 
 ### Stage 2: How to integrate other version control services with CodePipeline
 
