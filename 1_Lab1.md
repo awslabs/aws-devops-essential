@@ -53,6 +53,7 @@ Keep an open scratch pad in Cloud9 or a text editor on your local computer for n
 4. On the **_Create repository_** page, in the **_Repository name_** box, type **_WebAppRepo_**.
 5. In the **_Description_** box, type **_My demonstration repository_**.
 6. Choose **_Create repository_** to create an empty AWS CodeCommit repository named **_WebAppRepo_**.
+7. On the **_Configure email notifications_** page, choose **_Skip_**.
 
 **_Note_** The remaining steps in this tutorial assume you have named your AWS CodeCommit repository **_WebAppRepo_**. If you use a name other than **_WebAppRepo_**, be sure to use it throughout this tutorial. For more information about creating repositories, including how to create a repository from the terminal or command line, see [Create a Repository](http://docs.aws.amazon.com/codecommit/latest/userguide/how-to-create-repository.html).
 
