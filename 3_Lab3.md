@@ -106,6 +106,7 @@ user:~/environment $ aws sns subscribe --topic-arn <<YOUR-TOPIC-ARN>> \
 3. An Email would be sent for **confirmation** on the subscription. **Acknowledge** the subscription to receive mails from topic.
 
 ![pipeline-edit](./img/Lab4-Stage4-Step3-Confirm-MustDoOrErrorOccurs.PNG)
+
 4. Choose **+ Stage** at the point in the pipeline **between Staging** and **Prod** stage, and type a name for the stage.
 5. Choose the **+ action icon**.
 6. On the **Add action** page, do the following:
