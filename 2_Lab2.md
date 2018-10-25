@@ -13,35 +13,9 @@ user:~/environment/WebAppRepo (master) $ aws cloudformation create-stack --stack
 
 **_Note_**
   - The Stack will have a VPC w/ 1 public subnet, an IGW, route tables, ACL, 2 EC2 instances. Also, the EC2 instances will be launched with a User Data script to **automatically install the AWS CodeDeploy agent**.
-  - **Verify** that by visiting the **EC2 Console** and view option for **user data**.You would see the following script.
 
-```console
-#!/bin/bash -ex
-yum install -y aws-cli
-cd /home/ec2-user/
-wget https://aws-codedeploy-us-east-1.s3.amazonaws.com/latest/codedeploy-agent.noarch.rpm
-yum -y install codedeploy-agent.noarch.rpm
-service codedeploy-agent start
-```
-  - **Verify** in **System Log** by clicking Instance Settings->Get System Log for below entries
-  
-  ```shell
-Check if there is a codedeployagent config file.
-Start codedeploy-agent in post hook if this is a first install.
-Installing codedeploy-agent auto-update cron in '/etc/cron.d/codedeploy-agent-update'...
-Installing codedeploy-agent auto-update cron in '/etc/cron.d/codedeploy-agent-update'...Complete
-  Verifying  : codedeploy-agent-1.0-1.1458.noarch                           1/1 
-
-Installed:
-  codedeploy-agent.noarch 0:1.0-1.1458                                          
-
-Complete!
-+ service codedeploy-agent start
-  ```
-  
   - You can refer to [this instruction](http://docs.aws.amazon.com/codedeploy/latest/userguide/codedeploy-agent-operations-install.html) to install the CodeDeploy agent for other OSs like Amazon Linux, RHEL, Ubuntu, or Windows.
-  - AWS CodeDeploy can deploy to both Amazon EC2 instances and on-premises instances.To know more [visit](http://docs.aws.amazon.com/codedeploy/latest/userguide/instances.html).
-
+ 
 ***
 
 ### Stage 2: Create CodeDeploy Application and Deployment group

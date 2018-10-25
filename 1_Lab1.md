@@ -141,6 +141,7 @@ user:~/environment/WebAppRepo (master) $ aws cloudformation create-stack --stack
 2. Upon completion take a note on the service roles created. Check [describe-stacks](http://docs.aws.amazon.com/cli/latest/reference/cloudformation/describe-stacks.html) to find the output of the stack.
 
 3. For Console, refer to the CloudFormation [Outputs tab](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/cfn-console-view-stack-data-resources.html) to see output. A S3 Bucket is also created. Make a note of this bucket. This will be used to store the output from CodeBuild in the next step. **_Sample Output:_** ![](./img/cfn-output.png)
+
 4. Let us **create CodeBuild** project from **CLI**. To create the build project using AWS CLI, we need JSON-formatted input.
     **_Create_** a json file named **_'create-project.json'_** under 'MyDevEnvironment'. ![](./img/create-json.png) Copy the content below to create-project.json. (Replace the placeholders marked with **_<<>>_** with your own values.) To know more about the codebuild project json [review the spec](http://docs.aws.amazon.com/codebuild/latest/userguide/create-project.html#create-project-cli).
 
@@ -267,7 +268,15 @@ As a sample shown below:
 
 **_Note_** Visit this [page](http://docs.aws.amazon.com/codebuild/latest/userguide/build-spec-ref.html) to know more about build spec and how you can use multiple build specs in the same repo.
 
-2. Run the **_start-build_** command:
+2. Commit & push the build specification file to repository
+```console
+user:~/environment/WebAppRepo/ $ git add buildspec.yml
+user:~/environment/WebAppRepo/ $ git commit -m "adding buildspec.yml"
+user:~/environment/WebAppRepo/ $ git push -u origin master
+
+```
+
+3. Run the **_start-build_** command:
 
 ```console
 user:~/environment/WebAppRepo (master) $ aws codebuild start-build --project-name devops-webapp-project
@@ -275,8 +284,8 @@ user:~/environment/WebAppRepo (master) $ aws codebuild start-build --project-nam
 
 **_Note:_** You can start build with more advance configuration setting via JSON. If you are interested to learn more about it, please visit [here](http://docs.aws.amazon.com/codebuild/latest/userguide/run-build.html#run-build-cli).
 
-3. If successful, data would appear showing successful submission. Make a note of the build id value. You will need it in the next step.
-4. In this step, you will view summarized information about the status of your build.
+4. If successful, data would appear showing successful submission. Make a note of the build id value. You will need it in the next step.
+5. In this step, you will view summarized information about the status of your build.
 
 ```console
 user:~/environment/WebAppRepo (master) $ aws codebuild batch-get-builds --ids <<ID>>
@@ -284,8 +293,8 @@ user:~/environment/WebAppRepo (master) $ aws codebuild batch-get-builds --ids <<
 
 **_Note:_** Replace <<ID>> with the id value that appeared in the output of the previous step.
 
-5. Did the build succeed? if the build failed, why? The reason is build spec YAML file is not pushed to the repository. Push the code changes by **git add, commit, and push**. **Repeat** steps from 2 through 4.
 6. You will also be able to view detailed information about your build in CloudWatch Logs. You can complete this step by visiting the AWS CodeBuild console.
+
 7. In this step, you will verify the **_WebAppOutputArtifact.zip_** file that AWS CodeBuild built and then uploaded to the output bucket. You can complete this step by **visiting** the **AWS CodeBuild console** or the **Amazon S3 console**.
 
 **_Note:_** Troubleshooting CodeBuild - Use the [information](http://docs.aws.amazon.com/codebuild/latest/userguide/troubleshooting.html) to help you identify, diagnose, and address issues.
@@ -295,10 +304,3 @@ user:~/environment/WebAppRepo (master) $ aws codebuild batch-get-builds --ids <<
 This **concludes Lab 1**. In this lab, we successfully created repository with version control using AWS CodeCommit and built our code on the cloud using AWS CodeBuild service. You can now move to the next Lab,
 
 [Lab 2 - Automate deployment for testing](2_Lab2.md)
-
-**_✅ Do It Yourself (DIY):_** Using the CodeCommit Console try to do the following tasks. - Create an additional branch within your repository.
-
-* Make changes to the new branch and compare the changes between branches.
-* Enable triggers on your repository for specific events.
-
-***
