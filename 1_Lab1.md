@@ -15,18 +15,13 @@ Take a moment now and setup your Cloud9 development environment.
 5. You may leave **Environment settings** at their defaults of launching a new **t2.micro** EC2 instance which will be paused after **30 minutes** of inactivity.
 6. Click **Next step**.
 7. Review the environment settings and click **Create environment**. It will take several minutes for your environment to be provisioned and prepared.
-8. Once ready, your IDE will open to a welcome screen. Below that, you should see a terminal prompt similar to: ![setup](./img/setup-cloud9-terminal.png) You can run AWS CLI commands in here just like you would on your local computer. Verify that your user is logged in by running `aws sts get-caller-identity`.
+8. Once ready, your IDE will open to a welcome screen. Below that, you should see a terminal prompt similar to: ![setup](./img/setup-cloud9-terminal.png) You can run AWS CLI commands in here just like you would on your local computer. Verify that your user is logged in by running the following command.
 
 ```console
 user:~/environment $ aws sts get-caller-identity
 ```
 
 You'll see output indicating your account and user information:
-
-```console
-user:~/environment $ aws sts get-caller-identity
-```
-
 ```console
 {
     "Account": "123456789012",
@@ -237,7 +232,7 @@ user:~/environment/WebAppRepo (master) $ aws codebuild create-project --cli-inpu
 ### Stage 5: Let's build the code on cloud
 
 1. A build spec is a collection of build commands and related settings in YAML format, that AWS CodeBuild uses to run a build.
-    Create a file namely, **_buildspec.yml_** under **WebAppRepo** folder. Copy the content below to the file and save it. To know more about [how CodeBuild works](http://docs.aws.amazon.com/codebuild/latest/userguide/concepts.html#concepts-how-it-works).
+    Create a file namely, **_buildspec.yml_** under **WebAppRepo** folder. Copy the content below to the file and **save** it. To know more about [how CodeBuild works](http://docs.aws.amazon.com/codebuild/latest/userguide/concepts.html#concepts-how-it-works).
 
 ```
 version: 0.1

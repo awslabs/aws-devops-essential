@@ -45,7 +45,8 @@ user:~/environment/WebAppRepo (master) $ aws deploy create-deployment-group --ap
 ### Stage 3: Prepare application for deployment
 
 1. Without an AppSpec file, AWS CodeDeploy cannot map the source files in your application revision to their destinations or run scripts at various stages of the deployment.
-2. Copy the template into a text editor and save the file as **_appspec.yml_** in the **_WebAppRepo_** directory of the revision.
+
+2. Copy the template into a text editor and **save** the file as **_appspec.yml_** in the **_WebAppRepo_** directory of the revision.
 
 ```yml
 version: 0.0
@@ -76,6 +77,7 @@ As a sample shown below:
 ![appspec](./img/app-spec.png)
 
 3. **_Review_** the **_script folder_** in the repo for the various scripts like Start, Stop, health check etc. These scripts will be called as per the hook definition in **_appspec.yml_** file during deployment.
+
 4. Since we are going to deploy the application via CodeDeploy, we need to package additional files needed by CodeDeploy. Let us **_make change_** to the **_buildspec.yml_** to incorporate the changes.
 
 ```yml
@@ -103,7 +105,17 @@ artifacts:
 
 ```
 
-5. Save the changes to buildspec.yml. Run **_git add, commit, and push_** the changes to CodeCommit repo.
+5. **Save** the changes to buildspec.yml. 
+
+6. Commit & push the build specification file to repository
+
+```console
+user:~/environment/WebAppRepo/ $ git add buildspec.yml
+user:~/environment/WebAppRepo/ $ git add appspec.yml
+user:~/environment/WebAppRepo/ $ git commit -m "changes to build and app spec"
+user:~/environment/WebAppRepo/ $ git push -u origin master
+
+```
 
 ***
 
@@ -116,6 +128,7 @@ user:~/environment/WebAppRepo (master) $ aws codebuild start-build --project-nam
 ```
 
 2. Visit the CodeBuild Console to ensure build is successful. Upon successful completion of build, we should see new **_WebAppOutputArtifact.zip_** upload to the configured CodeBuild S3 Bucket.
+
 3. Get the **_eTag_** for the object **WebAppOutputArtifact.zip** uploaded to S3 bucket. You can get etag by visiting S3 console. Or, executing the following command.
 
 ```console
@@ -140,8 +153,11 @@ user:~/environment/WebAppRepo (master) $ aws deploy create-deployment --applicat
 5. **Confirm** via IAM Roles, if associated EC2 instance has appropriate permissions to read from bucket specified above. If not, you will get Access Denied at the DownloadBundle step during deployment.
 
 6. **Verify** the deployment status by visiting the **CodeDeploy console**.
+
 7. Check the deploy console for status. if the deployment failed, then look at the error message and correct the deployment issue.
+
 8. if the status of deployment is success, we should be able to view the web application deployed successfully to the EC2 server namely **_DevWebApp01_**
+
 9. Go to the **EC2 Console**, get the **public DNS name** of the server and open the url in a browser. You should see a sample web application.
 
 ### Summary
@@ -149,11 +165,3 @@ user:~/environment/WebAppRepo (master) $ aws deploy create-deployment --applicat
 This **concludes Lab 2**. In this lab, we successfully created CodeDeploy application and deployment group. We also modified buildspec.yml to include additional components needed for deployment. We also successfully completed deployment of application to test server.You can now move to the next Lab,
 
 [Lab 3 - Setup CI/CD using AWS CodePipeline](3_Lab3.md)
-
-**_✅ Do It Yourself (DIY):_** Environment variable for CodeBuild. How can we specifiy environment variable for your Build Environment. Environment variable contains a mapping of key/value scalars, where each mapping represents a single custom environment variable in plain text. key is the name of the custom environment variable, and value is that variable's value. To know more about how to pass environment variable. [Check the build spec reference](http://docs.aws.amazon.com/codebuild/latest/userguide/build-spec-ref.html)
-
-* Use SSM as Parameter Store.
-* If you want to store environment variables outside, then use Amazon EC2 Systems Manager Parameter Store. [Check this for how to store parameter and secure them using KMS](http://docs.aws.amazon.com/systems-manager/latest/userguide/sysman-paramstore-walk.html#sysman-paramstore-console).
-* To allow AWS CodeBuild to retrieve custom environment variables stored in Amazon EC2 Systems Manager Parameter Store, you must add the ssm:GetParameters action to your AWS CodeBuild service role.
-
-***
