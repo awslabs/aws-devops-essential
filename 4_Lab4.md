@@ -1,5 +1,5 @@
 
-## Lab 4 - Using Lambda as Test Stage in CodePipeline
+## Lab 4 (Optional) - Using Lambda as Test Stage in CodePipeline
 
 ### Stage 1: Create a sample Lambda function
 
@@ -156,30 +156,3 @@ This **concludes Lab 4**. In this lab, we successfully created Lambda function t
 You can now proceed to cleanup all the resources
 
 [Cleanup](README.md#clean-up)
-
-***
-
-## ✅ Additional Exercise
-
-### Stage 1: Pipeline + Infrastructure as code
-
-The whole lab activities from lab 1 to 3 in setting up CodeBuild, CodeDeploy and CodePipeline can be managed as code using CloudFormation. You can use the below template as sample to automate the creation.
-
-<https://github.com/awslabs/aws-devops-essential/raw/master/templates/aws-pipeline-commit-build-deploy.template>
-
-### Stage 2: How to integrate other version control services with CodePipeline
-
-Most of the version control systems provide Webhook for integration. Webhooks notify a remote service by issuing an HTTP POST when a commit is pushed to the repository. We can use AWS Lambda to receive the HTTP POST through Amazon API Gateway, and then download a copy of the repository.
-
-The following steps are explained in detail in the blog.<https://aws.amazon.com/blogs/devops/integrating-git-with-aws-codepipeline/>
-
-### Stage 3: How to custom build environment for CodeBuild
-
-Follow this blog. <https://aws.amazon.com/blogs/devops/extending-aws-codebuild-with-custom-build-environments/>
-
-### Stage 4: How to use Jenkins build server to build the project
-
-Follow this tutorial.
-<http://docs.aws.amazon.com/codepipeline/latest/userguide/tutorials-four-stage-pipeline.html>
-
-***

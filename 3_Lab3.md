@@ -141,13 +141,5 @@ Once you approve, the pipeline continues and completes successfully.
 
 This **concludes Lab 3**. In this lab, we successfully created CodePipeline for continuous code build and deployment. We also modified CodePipeline to include manual approval action before deploying code to production environment. We also successfully completed continuous deployment of application to both test and production servers. You can now move to the next Lab,
 
-[Lab 4 - Using Lambda as Test Stage in CodePipeline](4_Lab4.md)
+[Lab 4 (Optional) - Using Lambda as Test Stage in CodePipeline](4_Lab4.md)
 
-**_✅ Do It Yourself (DIY):_**
-
-* Import and Export pipeline. Refer this [link](http://docs.aws.amazon.com/codepipeline/latest/userguide/pipelines-create.html#pipelines-create-cli)
-* Using the CodeDeploy Console try to do the following tasks.
-  - Enable triggers on your Production Deployment group for specific events.
-  - Change the deployment type from In placement to BlueGreen. Also check various deployment config options.
-
-***

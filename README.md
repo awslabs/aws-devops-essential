@@ -47,7 +47,7 @@ This workshop is broken into multiple labs. You must complete each Lab before pr
 1. [Lab 1 - Build project on the cloud](1_Lab1.md) 
 2. [Lab 2 - Automate deployment for testing](2_Lab2.md)
 3. [Lab 3 - Setup CI/CD using AWS CodePipeline](3_Lab3.md)
-4. [Lab 4 - Using Lambda as Test Stage in CodePipeline](4_Lab4.md)
+4. [Lab 4 (Optional) - Using Lambda as Test Stage in CodePipeline](4_Lab4.md)
 
 
 
