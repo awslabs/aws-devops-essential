@@ -38,8 +38,12 @@ Amazon SNS
 ***
 
 ### **Important:**
+Preferred regions for lab
+- North Virginia US-EAST-1
+- Oregon US-WEST-2
 
-Select the region of your choice for the lab. Kindly the select the region which has all four Code* services. You can find the [region services list](https://aws.amazon.com/about-aws/global-infrastructure/regional-product-services/). Stick to the same region throughout all labs. **Make sure you have not reached the VPC or Internet Gateway limits for that region. If you already have 5 VPCs/IGWs, delete at least one before you proceed or choose an alternate region.** 
+If you want to your region choice for the lab. Kindly the select the region which has all four Code* services and Cloud9 service. You can find the [region services list](https://aws.amazon.com/about-aws/global-infrastructure/regional-product-services/). Stick to the same region throughout all labs. 
+**Make sure you have not reached the VPC or Internet Gateway limits for that region. If you already have 5 VPCs/IGWs, delete at least one before you proceed or choose an alternate region.** 
 
 # Labs
 This workshop is broken into multiple labs. You must complete each Lab before proceeding to the next.

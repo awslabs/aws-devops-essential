@@ -40,6 +40,8 @@ user:~/environment/WebAppRepo (master) $ aws deploy create-deployment-group --ap
 
 3. Let us review all the changes by visiting the [CodeDeploy Console](https://console.aws.amazon.com/codedeploy/home).
 
+![deploy](./img/Lab2-CodeDeploy-Success.png)
+
 ***
 
 ### Stage 3: Prepare application for deployment
@@ -154,11 +156,15 @@ user:~/environment/WebAppRepo (master) $ aws deploy create-deployment --applicat
 
 6. **Verify** the deployment status by visiting the **CodeDeploy console**.
 
+![deployment-success](./img/Lab2-CodeDeploy-deploymentSuccess.png)
+
 7. Check the deploy console for status. if the deployment failed, then look at the error message and correct the deployment issue.
 
 8. if the status of deployment is success, we should be able to view the web application deployed successfully to the EC2 server namely **_DevWebApp01_**
 
 9. Go to the **EC2 Console**, get the **public DNS name** of the server and open the url in a browser. You should see a sample web application.
+
+![webpage](./img/webpage-success.png)
 
 ### Summary
 
