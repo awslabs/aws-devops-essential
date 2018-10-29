@@ -48,7 +48,6 @@ Keep an open scratch pad in Cloud9 or a text editor on your local computer for n
 4. On the **_Create repository_** page, in the **_Repository name_** box, type **_WebAppRepo_**.
 5. In the **_Description_** box, type **_My demonstration repository_**.
 6. Choose **_Create repository_** to create an empty AWS CodeCommit repository named **_WebAppRepo_**.
-7. On the **_Configure email notifications_** page, choose **_Skip_**.
 
 **_Note_** The remaining steps in this tutorial assume you have named your AWS CodeCommit repository **_WebAppRepo_**. If you use a name other than **_WebAppRepo_**, be sure to use it throughout this tutorial. For more information about creating repositories, including how to create a repository from the terminal or command line, see [Create a Repository](http://docs.aws.amazon.com/codecommit/latest/userguide/how-to-create-repository.html).
 
@@ -116,7 +115,11 @@ user:~/environment/WebAppRepo/ $ git push -u origin master
 
 Provide your Git HTTPs credential when prompted. Credential helper will store it, hence you won't be asked again for subsequent push.
 
-**_💡 Tip_** After you have pushed files to your AWS CodeCommit repository, you can use the AWS CodeCommit console to view the contents. For more information, see [Browse the Contents of a Repository](http://docs.aws.amazon.com/codecommit/latest/userguide/how-to-browse.html).
+**_💡 Tip_** After you have pushed files to your AWS CodeCommit repository, you can use the [AWS CodeCommit console](https://console.aws.amazon.com/codecommit/home) to view the contents.
+
+![buildsuccess](./img/Lab1-CodeCommit-Success.png)
+
+For more information, see [Browse the Contents of a Repository](http://docs.aws.amazon.com/codecommit/latest/userguide/how-to-browse.html).
 
 ***
 
@@ -138,7 +141,8 @@ user:~/environment/WebAppRepo (master) $ aws cloudformation create-stack --stack
 3. For Console, refer to the CloudFormation [Outputs tab](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/cfn-console-view-stack-data-resources.html) to see output. A S3 Bucket is also created. Make a note of this bucket. This will be used to store the output from CodeBuild in the next step. **_Sample Output:_** ![](./img/cfn-output.png)
 
 4. Let us **create CodeBuild** project from **CLI**. To create the build project using AWS CLI, we need JSON-formatted input.
-    **_Create_** a json file named **_'create-project.json'_** under 'MyDevEnvironment'. ![](./img/create-json.png) Copy the content below to create-project.json. (Replace the placeholders marked with **_<<>>_** with your own values.) To know more about the codebuild project json [review the spec](http://docs.aws.amazon.com/codebuild/latest/userguide/create-project.html#create-project-cli).
+    **_Create_** a json file named **_'create-project.json'_** under 'MyDevEnvironment'. ![](./img/create-json.png) Copy the content below to create-project.json. (Replace the placeholders marked with **_<<>>_** with your own values.) 
+    
 
 ```json
 {
@@ -161,6 +165,9 @@ user:~/environment/WebAppRepo (master) $ aws cloudformation create-stack --stack
   "serviceRole": "<<BuildRoleArn-Value-FROM-CLOUDFORMATION-OUTPUT>>"
 }
 ```
+    
+  To know more about the codebuild project json [review the spec](http://docs.aws.amazon.com/codebuild/latest/userguide/create-project.html#create-project-cli).
+
 
 5. Switch to the directory that contains the file you just saved, and run the **_create-project_** command:
 
@@ -288,7 +295,8 @@ user:~/environment/WebAppRepo (master) $ aws codebuild batch-get-builds --ids <<
 
 **_Note:_** Replace <<ID>> with the id value that appeared in the output of the previous step.
 
-6. You will also be able to view detailed information about your build in CloudWatch Logs. You can complete this step by visiting the AWS CodeBuild console.
+6. You will also be able to view detailed information about your build in CloudWatch Logs. You can complete this step by visiting the [AWS CodeBuild console](https://console.aws.amazon.com/codebuild/home).
+![buildsuccess](./img/Lab1-CodeBuild-Success.png)
 
 7. In this step, you will verify the **_WebAppOutputArtifact.zip_** file that AWS CodeBuild built and then uploaded to the output bucket. You can complete this step by **visiting** the **AWS CodeBuild console** or the **Amazon S3 console**.
 

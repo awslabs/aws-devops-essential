@@ -38,7 +38,7 @@ user:~/environment/WebAppRepo (master) $ aws deploy create-deployment-group --ap
 
 **_Note:_** We are using the tags to attach instances to the deployment group.
 
-3. Let us review all the changes by visiting the CodeDeploy Console.
+3. Let us review all the changes by visiting the [CodeDeploy Console](https://console.aws.amazon.com/codedeploy/home).
 
 ***
 
