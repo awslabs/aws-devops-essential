@@ -1,5 +1,5 @@
 
-## Lab 4 - Using Lambda as Test Stage in CodePipeline
+## Lab 4 (Optional) - Using Lambda as Test Stage in CodePipeline
 
 ### Stage 1: Create a sample Lambda function
 
@@ -13,9 +13,11 @@
 8. Select Function trigger as **None** and click **Next**
 9. For Role, select **choose an existing role** and select **CodePipelineLambdaExecRole** which we created as part of the Lab 1 setup.
 10. Click **Next** and preview the changes. Once done, click **Finish**.
-**Note:**
-Cloud9 will create a local Lambda function named MyLambdaFunctionForAWSCodePipeline.
-11. Then **copy** the following code into the Lambda function index.js and **save** it.
+![LambdaConfig](./img/Lab4-Lambda-Config.png)
+
+**Note:** Cloud9 will create a local Lambda function named MyLambdaFunctionForAWSCodePipeline.
+
+11. Then **copy** the following code into the Lambda function **index.js** and **save** it.
 
 ```js
 var assert = require('assert');
@@ -117,26 +119,29 @@ exports.handler = function(event, context) {
 
 12. Lets deploy the modified function by clicking the deploy button as shown below.
 ![lambda-deploy](./img/lambda-deploy.png)
-13. Review the deployment changes by visiting the Lambda console. <https://console.aws.amazon.com/lambda>
+
+13. Review the deployment changes by visiting the [Lambda console](https://console.aws.amazon.com/lambda). 
 
 ***
 
 ### Stage 2: Add the Lambda Function to a Pipeline in the AWS CodePipeline Console
 
-In this step, you will add a new stage to your pipeline, and then add an action—a Lambda action that calls your function— to that stage.
+In this step, you will add a new stage to your pipeline, and then add an action — a Lambda action that calls your function in that stage.
 
-1. **Edit** the pipeline. Choose the option to add a stage after the **Staging** stage with the AWS CodeDeploy action. Type a name for the stage (for example, **LambdaTest**), and then choose the option to add an action to the stage.
+1. **Edit** the pipeline. Choose the option to add a stage after the **Deploy** stage with the AWS CodeDeploy action. Type a name for the stage (for example, **LambdaTest**).
 
 **_Note_**
 You can also choose to add your Lambda action to an existing stage. For demonstration purposes, we are adding the Lambda function as the only action in a stage to allow you to easily view its progress as artifacts progress through a pipeline. The event object, under the CodePipeline.job key, contains the [job details](http://docs.aws.amazon.com/codepipeline/latest/APIReference/API_JobDetails.html). For a full example of the JSON event AWS CodePipeline returns to Lambda, see [Example JSON Event](http://docs.aws.amazon.com/codepipeline/latest/userguide/actions-invoke-lambda-function.html#actions-invoke-lambda-function-json-event-example).
 
-2. In the **Add action** panel, for **Action category**, choose **Invoke**.
-- Under **Invoke actions**, for **Action name**, type a name for your Lambda action (for example, **MyLambdaAction**).
-- For **Provider**, choose **AWS Lambda**.
+2. Choose **+ Add action group**,
+- Type a name for your Lambda action (for example, **MyLambdaAction**).
+- For **Action Provider**, choose **AWS Lambda**.
 - For **Function name**, choose or type the name of your Lambda function (for example, **MyLambdaFunctionForAWSCodePipeline**).
-- For **User parameters**, specify **http://** and the Public DNS address for the Amazon EC2 **DevWebApp01** instance you copied earlier (for example, http://ec2-52-62-36-220.ap-southeast-2.compute.amazonaws.com), and then choose **Add action**.
+- For **User parameters**, specify **http://** and the Public DNS address for the Amazon EC2 **DevWebApp01** instance you copied earlier (for example, http://ec2-52-62-36-220.ap-southeast-2.compute.amazonaws.com), and then choose **Save**.
 
-3. On the **Edit** page, choose **Save pipeline changes**.
+3. Finally, save changes to pipeline by clicking **Save** button on top..
+
+![lambdaAction](./img/Lab4-LambdaAction.png)
 
 ***
 
@@ -156,30 +161,3 @@ This **concludes Lab 4**. In this lab, we successfully created Lambda function t
 You can now proceed to cleanup all the resources
 
 [Cleanup](README.md#clean-up)
-
-***
-
-## ✅ Additional Exercise
-
-### Stage 1: Pipeline + Infrastructure as code
-
-The whole lab activities from lab 1 to 3 in setting up CodeBuild, CodeDeploy and CodePipeline can be managed as code using CloudFormation. You can use the below template as sample to automate the creation.
-
-<https://github.com/awslabs/aws-devops-essential/raw/master/templates/aws-pipeline-commit-build-deploy.template>
-
-### Stage 2: How to integrate other version control services with CodePipeline
-
-Most of the version control systems provide Webhook for integration. Webhooks notify a remote service by issuing an HTTP POST when a commit is pushed to the repository. We can use AWS Lambda to receive the HTTP POST through Amazon API Gateway, and then download a copy of the repository.
-
-The following steps are explained in detail in the blog.<https://aws.amazon.com/blogs/devops/integrating-git-with-aws-codepipeline/>
-
-### Stage 3: How to custom build environment for CodeBuild
-
-Follow this blog. <https://aws.amazon.com/blogs/devops/extending-aws-codebuild-with-custom-build-environments/>
-
-### Stage 4: How to use Jenkins build server to build the project
-
-Follow this tutorial.
-<http://docs.aws.amazon.com/codepipeline/latest/userguide/tutorials-four-stage-pipeline.html>
-
-***

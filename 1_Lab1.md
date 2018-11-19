@@ -15,18 +15,13 @@ Take a moment now and setup your Cloud9 development environment.
 5. You may leave **Environment settings** at their defaults of launching a new **t2.micro** EC2 instance which will be paused after **30 minutes** of inactivity.
 6. Click **Next step**.
 7. Review the environment settings and click **Create environment**. It will take several minutes for your environment to be provisioned and prepared.
-8. Once ready, your IDE will open to a welcome screen. Below that, you should see a terminal prompt similar to: ![setup](./img/setup-cloud9-terminal.png) You can run AWS CLI commands in here just like you would on your local computer. Verify that your user is logged in by running `aws sts get-caller-identity`.
+8. Once ready, your IDE will open to a welcome screen. Below that, you should see a terminal prompt similar to: ![setup](./img/setup-cloud9-terminal.png) You can run AWS CLI commands in here just like you would on your local computer. Verify that your user is logged in by running the following command.
 
 ```console
 user:~/environment $ aws sts get-caller-identity
 ```
 
 You'll see output indicating your account and user information:
-
-```console
-user:~/environment $ aws sts get-caller-identity
-```
-
 ```console
 {
     "Account": "123456789012",
@@ -48,12 +43,11 @@ Keep an open scratch pad in Cloud9 or a text editor on your local computer for n
 **_To create the AWS CodeCommit repository (console)_**
 
 1. Open the AWS CodeCommit console at <https://console.aws.amazon.com/codecommit>.
-2. In the region selector, choose the region where you will create the repository. For more information, see [Regions and Git Connection Endpoints](http://docs.aws.amazon.com/codecommit/latest/userguide/regions.html).
-3. On the Welcome page, choose Get Started Now. (If a **_Dashboard_** page appears instead, choose **_Create repository_**.)
-4. On the **_Create repository_** page, in the **_Repository name_** box, type **_WebAppRepo_**.
-5. In the **_Description_** box, type **_My demonstration repository_**.
-6. Choose **_Create repository_** to create an empty AWS CodeCommit repository named **_WebAppRepo_**.
-7. On the **_Configure email notifications_** page, choose **_Skip_**.
+
+2. On the Welcome page, choose Get Started Now. (If a **_Dashboard_** page appears instead, choose **_Create repository_**.)
+3. On the **_Create repository_** page, in the **_Repository name_** box, type **_WebAppRepo_**.
+4. In the **_Description_** box, type **_My demonstration repository_**.
+5. Choose **_Create repository_** to create an empty AWS CodeCommit repository named **_WebAppRepo_**.
 
 **_Note_** The remaining steps in this tutorial assume you have named your AWS CodeCommit repository **_WebAppRepo_**. If you use a name other than **_WebAppRepo_**, be sure to use it throughout this tutorial. For more information about creating repositories, including how to create a repository from the terminal or command line, see [Create a Repository](http://docs.aws.amazon.com/codecommit/latest/userguide/how-to-create-repository.html).
 
@@ -121,7 +115,11 @@ user:~/environment/WebAppRepo/ $ git push -u origin master
 
 Provide your Git HTTPs credential when prompted. Credential helper will store it, hence you won't be asked again for subsequent push.
 
-**_💡 Tip_** After you have pushed files to your AWS CodeCommit repository, you can use the AWS CodeCommit console to view the contents. For more information, see [Browse the Contents of a Repository](http://docs.aws.amazon.com/codecommit/latest/userguide/how-to-browse.html).
+**_💡 Tip_** After you have pushed files to your AWS CodeCommit repository, you can use the [AWS CodeCommit console](https://console.aws.amazon.com/codecommit/home) to view the contents.
+
+![buildsuccess](./img/Lab1-CodeCommit-Success.png)
+
+For more information, see [Browse the Contents of a Repository](http://docs.aws.amazon.com/codecommit/latest/userguide/how-to-browse.html).
 
 ***
 
@@ -141,8 +139,10 @@ user:~/environment/WebAppRepo (master) $ aws cloudformation create-stack --stack
 2. Upon completion take a note on the service roles created. Check [describe-stacks](http://docs.aws.amazon.com/cli/latest/reference/cloudformation/describe-stacks.html) to find the output of the stack.
 
 3. For Console, refer to the CloudFormation [Outputs tab](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/cfn-console-view-stack-data-resources.html) to see output. A S3 Bucket is also created. Make a note of this bucket. This will be used to store the output from CodeBuild in the next step. **_Sample Output:_** ![](./img/cfn-output.png)
+
 4. Let us **create CodeBuild** project from **CLI**. To create the build project using AWS CLI, we need JSON-formatted input.
-    **_Create_** a json file named **_'create-project.json'_** under 'MyDevEnvironment'. ![](./img/create-json.png) Copy the content below to create-project.json. (Replace the placeholders marked with **_<<>>_** with your own values.) To know more about the codebuild project json [review the spec](http://docs.aws.amazon.com/codebuild/latest/userguide/create-project.html#create-project-cli).
+    **_Create_** a json file named **_'create-project.json'_** under 'MyDevEnvironment'. ![](./img/create-json.png) Copy the content below to create-project.json. (Replace the placeholders marked with **_<<>>_** with your own values.) 
+    
 
 ```json
 {
@@ -165,6 +165,9 @@ user:~/environment/WebAppRepo (master) $ aws cloudformation create-stack --stack
   "serviceRole": "<<BuildRoleArn-Value-FROM-CLOUDFORMATION-OUTPUT>>"
 }
 ```
+    
+  To know more about the codebuild project json [review the spec](http://docs.aws.amazon.com/codebuild/latest/userguide/create-project.html#create-project-cli).
+
 
 5. Switch to the directory that contains the file you just saved, and run the **_create-project_** command:
 
@@ -236,7 +239,7 @@ user:~/environment/WebAppRepo (master) $ aws codebuild create-project --cli-inpu
 ### Stage 5: Let's build the code on cloud
 
 1. A build spec is a collection of build commands and related settings in YAML format, that AWS CodeBuild uses to run a build.
-    Create a file namely, **_buildspec.yml_** under **WebAppRepo** folder. Copy the content below to the file and save it. To know more about [how CodeBuild works](http://docs.aws.amazon.com/codebuild/latest/userguide/concepts.html#concepts-how-it-works).
+    Create a file namely, **_buildspec.yml_** under **WebAppRepo** folder. Copy the content below to the file and **save** it. To know more about [how CodeBuild works](http://docs.aws.amazon.com/codebuild/latest/userguide/concepts.html#concepts-how-it-works).
 
 ```
 version: 0.1
@@ -267,7 +270,15 @@ As a sample shown below:
 
 **_Note_** Visit this [page](http://docs.aws.amazon.com/codebuild/latest/userguide/build-spec-ref.html) to know more about build spec and how you can use multiple build specs in the same repo.
 
-2. Run the **_start-build_** command:
+2. Commit & push the build specification file to repository
+```console
+user:~/environment/WebAppRepo/ $ git add buildspec.yml
+user:~/environment/WebAppRepo/ $ git commit -m "adding buildspec.yml"
+user:~/environment/WebAppRepo/ $ git push -u origin master
+
+```
+
+3. Run the **_start-build_** command:
 
 ```console
 user:~/environment/WebAppRepo (master) $ aws codebuild start-build --project-name devops-webapp-project
@@ -275,8 +286,8 @@ user:~/environment/WebAppRepo (master) $ aws codebuild start-build --project-nam
 
 **_Note:_** You can start build with more advance configuration setting via JSON. If you are interested to learn more about it, please visit [here](http://docs.aws.amazon.com/codebuild/latest/userguide/run-build.html#run-build-cli).
 
-3. If successful, data would appear showing successful submission. Make a note of the build id value. You will need it in the next step.
-4. In this step, you will view summarized information about the status of your build.
+4. If successful, data would appear showing successful submission. Make a note of the build id value. You will need it in the next step.
+5. In this step, you will view summarized information about the status of your build.
 
 ```console
 user:~/environment/WebAppRepo (master) $ aws codebuild batch-get-builds --ids <<ID>>
@@ -284,8 +295,9 @@ user:~/environment/WebAppRepo (master) $ aws codebuild batch-get-builds --ids <<
 
 **_Note:_** Replace <<ID>> with the id value that appeared in the output of the previous step.
 
-5. Did the build succeed? if the build failed, why? The reason is build spec YAML file is not pushed to the repository. Push the code changes by **git add, commit, and push**. **Repeat** steps from 2 through 4.
-6. You will also be able to view detailed information about your build in CloudWatch Logs. You can complete this step by visiting the AWS CodeBuild console.
+6. You will also be able to view detailed information about your build in CloudWatch Logs. You can complete this step by visiting the [AWS CodeBuild console](https://console.aws.amazon.com/codebuild/home).
+![buildsuccess](./img/Lab1-CodeBuild-Success.png)
+
 7. In this step, you will verify the **_WebAppOutputArtifact.zip_** file that AWS CodeBuild built and then uploaded to the output bucket. You can complete this step by **visiting** the **AWS CodeBuild console** or the **Amazon S3 console**.
 
 **_Note:_** Troubleshooting CodeBuild - Use the [information](http://docs.aws.amazon.com/codebuild/latest/userguide/troubleshooting.html) to help you identify, diagnose, and address issues.
@@ -295,10 +307,3 @@ user:~/environment/WebAppRepo (master) $ aws codebuild batch-get-builds --ids <<
 This **concludes Lab 1**. In this lab, we successfully created repository with version control using AWS CodeCommit and built our code on the cloud using AWS CodeBuild service. You can now move to the next Lab,
 
 [Lab 2 - Automate deployment for testing](2_Lab2.md)
-
-**_✅ Do It Yourself (DIY):_** Using the CodeCommit Console try to do the following tasks. - Create an additional branch within your repository.
-
-* Make changes to the new branch and compare the changes between branches.
-* Enable triggers on your repository for specific events.
-
-***

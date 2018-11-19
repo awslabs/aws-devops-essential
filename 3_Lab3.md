@@ -10,33 +10,33 @@ When you use the pipeline wizard, AWS CodePipeline creates the names of stages (
 Also, existing pipeline configuration can be exported and used to create pipeline in another region.
 
 1. Sign in to the **AWS Management Console** and open the **AWS CodePipeline** console at [http://console.aws.amazon.com/codepipeline](http://console.aws.amazon.com/codepipeline).
-2. On the **Welcome** page, choose **Create pipeline**.
+2. On the **Codepipeline Home** page, choose **Create pipeline**.
 
-If this is your first time using AWS CodePipeline, an introductory page appears instead of **Welcome**. Choose **Get Started Now**.
 
-3. On the **Step 1: Name** page, in the **Pipeline name** box, type the name for your pipeline, and then choose **Next step**.
+3. On the **Step 1: Choose pipeline settings** page, in the **Pipeline name** box, type the name for your pipeline
 
-Within a single AWS account, each pipeline you create in a region must have a unique name. Names can be reused for pipelines in different regions.
+4. For **Service role**, Select **Existing service role** and choose the Role name from drop down starting with **DevopsWorkshop**
+
+5. For **Artifact store**, Select **Custom location** and choose the  Bucket from drop down starting with **cicd-workshop**, and then choose **Next step**.
 
 **_Note_**
+Within a single AWS account, each pipeline you create in a region must have a unique name. Names can be reused for pipelines in different regions.
+
 After you create a pipeline, you cannot change its name. For information about other limitations, see [Limits in AWS CodePipeline](https://docs.aws.amazon.com/codepipeline/latest/userguide/limits.html).
 
-4. On the **Step 2: Source** page, in the **Source provider** drop-down list, choose the type of repository where your source code is stored and specify its required options:
-  - **AWS CodeCommit**: In **Repository name**, choose the name of the AWS CodeCommit repository you created in Lab 1 to use as the source location for your pipeline. In Branch name, from the drop-down list, choose the branch you want to use.
-  - After you choose the AWS CodeCommit repository name and branch, a message is displayed in **Change Detection Mode** showing the Amazon CloudWatch Events rule that will be created for this pipeline. Leave default selection. Choose **Next step**.
+6. On the **Step 2: Source** page, in the **Source provider** drop-down list, choose the type of repository where your source code is stored and specify its required options:
+  - **AWS CodeCommit**: In **Repository name**, choose the name of the AWS CodeCommit repository you created in Lab 1 to use as the source location for your pipeline. In **Branch name**, from the drop-down list, choose the **master** branch.
+  - In **Change Detection Mode** leave the default selection of Amazon CloudWatch Events selection. Choose **Next step**.
 
-5. On the **Step 3: Build** page, do the following, and then choose **Next step:**
+6. On the **Step 3: Build** page, do the following
   - Choose **AWS CodeBuild**, and then **Select** an **existing build project** we created in Lab 1.
   - Then choose **Next step**.
 
-6. On the **Step 4: Deploy** page, do the following, and then choose Next step:
+7. On the **Step 4: Deploy** page, do the following, and then choose Next step:
   - Choose the following default providers from the Deployment provider drop-down list:
     + **AWS CodeDeploy:** Type or choose the name of an existing AWS CodeDeploy application in Application name and the name of a deployment group for that application in Deployment group **created in Lab2** and then choose **Next step**.
 
-7. On the **Step 5: Service Role** page, do the following, and then choose **Next step**:
-  - In the **Service Role**, drop-down list, choose an IAM service role we **create in Lab 1** for AWS CodePipeline.
-
-8. On the **Step 6: Review** page, review your pipeline configuration, and then choose **Create pipeline** to create the pipeline.
+8. On the **Step 5: Review** page, review your pipeline configuration, and then choose **Create pipeline** to create the pipeline.
 
 Image below shows successfully created pipeline.
 ![pipeline-complete](./img/Lab3-Stage1-Complete.PNG)
@@ -71,14 +71,13 @@ You can use the AWS CodePipeline console to add, edit, or remove stages in a pip
 We will edit the pipeline to add the stage for production deployment and introduce manual gating for production deployment.
 
 1. On the pipeline details page, choose **Edit**. This opens the editing page for the pipeline.
-2. To add a stage, choose **+ Stage** after the existing **Staging** Stage.
-3. Provide a name for the stage as **Prod**, and then add an one action to it. Items marked with an asterisk are required.
-4. The Add action panel opens. In Action category, choose the category as **Deploy**.
-5. In **Deploy Action** section: provide name as **ProductionDeployment** and deployment provider as **AWS CodeDeploy**
-6. In **AWS CodeDeploy:** Type or choose the name of an existing AWS CodeDeploy application in Application name and the name the **production deployment group** created previous stage
-7. In **Input artifacts**: select the **MyAppBuild**
-8. Choose **Add Action**.
-9. Finally, save changes by clicking **Save pipeline changes** button.
+2. To add a stage, choose **+ Add stage** after the existing **Deploy** Stage.
+3. Provide a name for the stage as **Production**, and then add an one action to it. Items marked with an asterisk are required.
+4. Then choose **+ Add action group**. In **Edit Action** section: provide name as **ProductionDeployment** and action provider as **AWS CodeDeploy**
+5. In **AWS CodeDeploy:** Type or choose the name of an existing AWS CodeDeploy application in Application name and the name the **production deployment group** created previous stage
+7. In **Input artifacts**: select the **BuildArtifact**
+8. Choose **Save**.
+9. Finally, save changes by clicking **Save** button on top.
 
 ![pipeline-edit](./img/Lab3-Stage3-Editing.PNG)
 ***
@@ -107,15 +106,15 @@ user:~/environment $ aws sns subscribe --topic-arn <<YOUR-TOPIC-ARN>> \
 
 ![pipeline-edit](./img/Lab4-Stage4-Step3-Confirm-MustDoOrErrorOccurs.PNG)
 
-4. Choose **+ Stage** at the point in the pipeline **between Staging** and **Prod** stage, and type a name for the stage.
-5. Choose the **+ action icon**.
-6. On the **Add action** page, do the following:
-7. In **Action category**, choose **Approval**.
-8. In **Action name**, type a name to identify the action.
-9. In **Approval type**, choose **Manual approval**.
-10. In **SNS topic ARN**, choose the name of the topic created to send notifications for the approval action.
-11. (Optional) In **Comments**, type any additional information you want to share with the reviewer.
-12. Choose **Add action**.
+4. On the pipeline details page, choose **Edit**. This opens the editing page for the pipeline. Choose **+ Add stage** at the point in the pipeline **between Deploy** and **Production** stage, and type a name **Approval** for the stage.
+5. Choose the **+ Add action group**.
+6. On the **Edit action** page, do the following:
+7. In **Action name**, type a name to identify the action.
+8. In **Action provider**, choose **Manual approval**.
+9. In **SNS topic ARN**, choose the name of the topic created to send notifications for the approval action.
+10. (Optional) In **Comments**, type any additional information you want to share with the reviewer.
+11. Choose **Save**.
+12. Save changes to pipeline by clicking **Save** button on top.
 13. To test your action, choose **Release change** to process that commit through the pipeline, commit a change to the source specified in the source stage of the pipeline.
 
 ***
@@ -141,13 +140,5 @@ Once you approve, the pipeline continues and completes successfully.
 
 This **concludes Lab 3**. In this lab, we successfully created CodePipeline for continuous code build and deployment. We also modified CodePipeline to include manual approval action before deploying code to production environment. We also successfully completed continuous deployment of application to both test and production servers. You can now move to the next Lab,
 
-[Lab 4 - Using Lambda as Test Stage in CodePipeline](4_Lab4.md)
+[Lab 4 (Optional) - Using Lambda as Test Stage in CodePipeline](4_Lab4.md)
 
-**_✅ Do It Yourself (DIY):_**
-
-* Import and Export pipeline. Refer this [link](http://docs.aws.amazon.com/codepipeline/latest/userguide/pipelines-create.html#pipelines-create-cli)
-* Using the CodeDeploy Console try to do the following tasks.
-  - Enable triggers on your Production Deployment group for specific events.
-  - Change the deployment type from In placement to BlueGreen. Also check various deployment config options.
-
-***
