@@ -53,6 +53,8 @@ Image below shows successfully executed pipeline.
 1. Run the following to create a deployment group and associates it with the specified application and the user's AWS account. You need to replace the service role ARN we created using roles stack.
 
 ```console
+user:~/environment/WebAppRepo (master) $ echo $(aws cloudformation describe-stacks --stack-name DevopsWorkshop-roles | jq -r '.Stacks[0].Outputs[]|select(.OutputKey=="DeployRoleArn")|.OutputValue')
+
 user:~/environment $ aws deploy create-deployment-group --application-name DevOps-WebApp  \
 --deployment-config-name CodeDeployDefault.OneAtATime \
 --deployment-group-name DevOps-WebApp-ProdGroup \
