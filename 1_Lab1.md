@@ -140,8 +140,16 @@ user:~/environment/WebAppRepo (master) $ aws cloudformation create-stack --stack
 
 3. For Console, refer to the CloudFormation [Outputs tab](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/cfn-console-view-stack-data-resources.html) to see output. A S3 Bucket is also created. Make a note of this bucket. This will be used to store the output from CodeBuild in the next step. **_Sample Output:_** ![](./img/cfn-output.png)
 
-4. Let us **create CodeBuild** project from **CLI**. To create the build project using AWS CLI, we need JSON-formatted input.
-    **_Create_** a json file named **_'create-project.json'_** under 'MyDevEnvironment'. ![](./img/create-json.png) Copy the content below to create-project.json. (Replace the placeholders marked with **_<<>>_** with your own values.) 
+4. Run the following commands to get the value of Build Role ARN and S3 bucket from cloudformation template launched earlier.
+```json
+user:~/environment/WebAppRepo (master) $ sudo yum -y install jq
+user:~/environment/WebAppRepo (master) $ echo $(aws cloudformation describe-stacks --stack-name DevopsWorkshop-roles | jq -r '.Stacks[0].Outputs[]|select(.OutputKey=="BuildRoleArn")|.OutputValue')
+user:~/environment/WebAppRepo (master) $ echo $(aws cloudformation describe-stacks --stack-name DevopsWorkshop-roles | jq -r '.Stacks[0].Outputs[]|select(.OutputKey=="S3BucketName")|.OutputValue')
+
+```
+
+5. Let us **create CodeBuild** project from **CLI**. To create the build project using AWS CLI, we need JSON-formatted input.
+    **_Create_** a json file named **_'create-project.json'_** under 'MyDevEnvironment'. ![](./img/create-json.png) Copy the content below to create-project.json. (Replace the placeholders marked with **_<<>>_** with  values for BuildRole ARN, S3 Output Bucket and region from the previous step.) 
     
 
 ```json
@@ -149,11 +157,11 @@ user:~/environment/WebAppRepo (master) $ aws cloudformation create-stack --stack
   "name": "devops-webapp-project",
   "source": {
     "type": "CODECOMMIT",
-    "location": "https://git-codecommit.<<YOUR-REGION-ID>>.amazonaws.com/v1/repos/WebAppRepo"
+    "location": "https://git-codecommit.<<REPLACE-YOUR-REGION-ID>>.amazonaws.com/v1/repos/WebAppRepo"
   },
   "artifacts": {
     "type": "S3",
-    "location": "<<YOUR-CODEBUILD-OUTPUT-BUCKET>>",
+    "location": "<<REPLACE-YOUR-CODEBUILD-OUTPUT-BUCKET>>",
     "packaging": "ZIP",
     "name": "WebAppOutputArtifact.zip"
   },
@@ -162,7 +170,7 @@ user:~/environment/WebAppRepo (master) $ aws cloudformation create-stack --stack
     "image": "aws/codebuild/java:openjdk-8",
     "computeType": "BUILD_GENERAL1_SMALL"
   },
-  "serviceRole": "<<BuildRoleArn-Value-FROM-CLOUDFORMATION-OUTPUT>>"
+  "serviceRole": "<<REPLACE-BuildRoleArn-Value-FROM-CLOUDFORMATION-OUTPUT>>"
 }
 ```
     
