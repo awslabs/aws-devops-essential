@@ -93,7 +93,7 @@ If the action is approved, the pipeline execution resumes. If the action is reje
 1. **Create SNS topic** for Approval notification. And note the **topic ARN** from the result.
 
 ```console
-user:~/environment $ aws sns create-topic --name WebApp-Approval-Topic
+user:~/environment $ aws sns create-topic --name WebApp-Approval-Topic --region <YOUR-REGION>
 ```
 
 2. **Subscribe** to the topic using your email id. **Replace** the **ARN** and **email id** placeholders accordingly.
