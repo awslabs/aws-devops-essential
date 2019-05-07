@@ -6,7 +6,7 @@ AWS Cloud9 is a cloud-based integrated development environment (IDE) that lets y
 
 Take a moment now and setup your Cloud9 development environment.
 
-### ✅  Step-by-step Instructions**
+### ✅  Step-by-step Instructions
 
 1. Go to the AWS Management Console, click **Services** then select **Cloud9** under Developer Tools.
 2. Click **Create environment**.
@@ -141,11 +141,11 @@ user:~/environment/WebAppRepo (master) $ aws cloudformation create-stack --stack
 3. For Console, refer to the CloudFormation [Outputs tab](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/cfn-console-view-stack-data-resources.html) to see output. A S3 Bucket is also created. Make a note of this bucket. This will be used to store the output from CodeBuild in the next step. **_Sample Output:_** ![](./img/cfn-output.png)
 
 4. Run the following commands to get the value of Build Role ARN and S3 bucket from cloudformation template launched earlier.
-```json
+
+```console
 user:~/environment/WebAppRepo (master) $ sudo yum -y install jq
 user:~/environment/WebAppRepo (master) $ echo $(aws cloudformation describe-stacks --stack-name DevopsWorkshop-roles | jq -r '.Stacks[0].Outputs[]|select(.OutputKey=="BuildRoleArn")|.OutputValue')
 user:~/environment/WebAppRepo (master) $ echo $(aws cloudformation describe-stacks --stack-name DevopsWorkshop-roles | jq -r '.Stacks[0].Outputs[]|select(.OutputKey=="S3BucketName")|.OutputValue')
-
 ```
 
 5. Let us **create CodeBuild** project from **CLI**. To create the build project using AWS CLI, we need JSON-formatted input.
@@ -177,13 +177,13 @@ user:~/environment/WebAppRepo (master) $ echo $(aws cloudformation describe-stac
   To know more about the codebuild project json [review the spec](http://docs.aws.amazon.com/codebuild/latest/userguide/create-project.html#create-project-cli).
 
 
-5. Switch to the directory that contains the file you just saved, and run the **_create-project_** command:
+6. Switch to the directory that contains the file you just saved, and run the **_create-project_** command:
 
 ```console
 user:~/environment/WebAppRepo (master) $ aws codebuild create-project --cli-input-json file://create-project.json
 ```
 
-6. Sample output JSON for your reference
+7. Sample output JSON for your reference
 
 ```json
 {
@@ -235,7 +235,7 @@ user:~/environment/WebAppRepo (master) $ aws codebuild create-project --cli-inpu
 }
 ```
 
-7. If successful, output JSON should have values such as:
+8. If successful, output JSON should have values such as:
   * The lastModified value represents the time, in Unix time format, when information about the build project was last changed.
   * The created value represents the time, in Unix time format, when the build project was created.
   * The ARN value represents the ARN of the build project.
@@ -249,7 +249,7 @@ user:~/environment/WebAppRepo (master) $ aws codebuild create-project --cli-inpu
 1. A build spec is a collection of build commands and related settings in YAML format, that AWS CodeBuild uses to run a build.
     Create a file namely, **_buildspec.yml_** under **WebAppRepo** folder. Copy the content below to the file and **save** it. To know more about [how CodeBuild works](http://docs.aws.amazon.com/codebuild/latest/userguide/concepts.html#concepts-how-it-works).
 
-```
+```yaml
 version: 0.1
 
 phases:

@@ -10,7 +10,7 @@ When you use the pipeline wizard, AWS CodePipeline creates the names of stages (
 Also, existing pipeline configuration can be exported and used to create pipeline in another region.
 
 1. Sign in to the **AWS Management Console** and open the **AWS CodePipeline** console at [http://console.aws.amazon.com/codepipeline](http://console.aws.amazon.com/codepipeline).
-2. On the **Codepipeline Home** page, choose **Create pipeline**.
+2. On the **CodePipeline Home** page, choose **Create pipeline**.
 
 
 3. On the **Step 1: Choose pipeline settings** page, in the **Pipeline name** box, type the name for your pipeline
@@ -28,20 +28,20 @@ After you create a pipeline, you cannot change its name. For information about o
   - **AWS CodeCommit**: In **Repository name**, choose the name of the AWS CodeCommit repository you created in Lab 1 to use as the source location for your pipeline. In **Branch name**, from the drop-down list, choose the **master** branch.
   - In **Change Detection Mode** leave the default selection of Amazon CloudWatch Events selection. Choose **Next step**.
 
-6. On the **Step 3: Build** page, do the following
+7. On the **Step 3: Build** page, do the following
   - Choose **AWS CodeBuild**, and then **Select** an **existing build project** we created in Lab 1.
   - Then choose **Next step**.
 
-7. On the **Step 4: Deploy** page, do the following, and then choose Next step:
+8. On the **Step 4: Deploy** page, do the following, and then choose Next step:
   - Choose the following default providers from the Deployment provider drop-down list:
     + **AWS CodeDeploy:** Type or choose the name of an existing AWS CodeDeploy application in Application name and the name of a deployment group for that application in Deployment group **created in Lab2** and then choose **Next step**.
 
-8. On the **Step 5: Review** page, review your pipeline configuration, and then choose **Create pipeline** to create the pipeline.
+9. On the **Step 5: Review** page, review your pipeline configuration, and then choose **Create pipeline** to create the pipeline.
 
 Image below shows successfully created pipeline.
 ![pipeline-complete](./img/Lab3-Stage1-Complete.PNG)
 
-9. Now that you've created your pipeline, you can view it in the console. Pipeline will start automatically in few minutes. Otherwise, test it by manually clicking the **Release** button.
+10. Now that you've created your pipeline, you can view it in the console. Pipeline will start automatically in few minutes. Otherwise, test it by manually clicking the **Release** button.
 
 Image below shows successfully executed pipeline.
 ![pipeline-released](./img/Lab3-Stage1-Complete-released.PNG)
