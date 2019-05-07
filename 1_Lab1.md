@@ -180,7 +180,7 @@ user:~/environment/WebAppRepo (master) $ echo $(aws cloudformation describe-stac
 6. Switch to the directory that contains the file you just saved, and run the **_create-project_** command:
 
 ```console
-user:~/environment/WebAppRepo (master) $ aws codebuild create-project --cli-input-json file://create-project.json
+user:~/environment/WebAppRepo (master) $ aws codebuild create-project --cli-input-json file://../create-project.json
 ```
 
 7. Sample output JSON for your reference
