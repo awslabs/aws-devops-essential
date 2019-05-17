@@ -8,9 +8,9 @@
 3. Expand Lambda, and select **λ+** [Create a lambda function]
 4. Enter Function Name as **MyLambdaFunctionForAWSCodePipeline**
 5. Click **Next**
-6. Select runtime as **Node.js 6.10** and blue print as **empty-nodejs**
+6. Select runtime as **Node.js 8.10** and blue print as **empty-nodejs**
 7. Click **Next**
-8. Select Function trigger as **None** and click **Next**
+8. Select Function trigger as **none** and click **Next**
 9. For Role, select **choose an existing role** and select **CodePipelineLambdaExecRole** which we created as part of the Lab 1 setup.
 10. Click **Next** and preview the changes. Once done, click **Finish**.
 ![LambdaConfig](./img/Lab4-Lambda-Config.png)
