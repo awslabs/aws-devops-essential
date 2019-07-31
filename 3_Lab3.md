@@ -10,10 +10,10 @@ When you use the pipeline wizard, AWS CodePipeline creates the names of stages (
 Also, existing pipeline configuration can be exported and used to create pipeline in another region.
 
 1. Sign in to the **AWS Management Console** and open the **AWS CodePipeline** console at [http://console.aws.amazon.com/codepipeline](http://console.aws.amazon.com/codepipeline).
+
 2. On the **CodePipeline Home** page, choose **Create pipeline**.
 
-
-3. On the **Step 1: Choose pipeline settings** page, in the **Pipeline name** box, type the name for your pipeline
+3. On the **Step 1: Choose pipeline settings** page, in the **Pipeline name** box, type the name for your pipeline like **WebAppPipeline**.
 
 4. For **Service role**, Select **Existing service role** and choose the Role name from drop down starting with **DevopsWorkshop**
 
@@ -111,7 +111,7 @@ user:~/environment $ aws sns subscribe --topic-arn <<YOUR-TOPIC-ARN>> \
 4. On the pipeline details page, choose **Edit**. This opens the editing page for the pipeline. Choose **+ Add stage** at the point in the pipeline **between Deploy** and **Production** stage, and type a name **Approval** for the stage.
 5. Choose the **+ Add action group**.
 6. On the **Edit action** page, do the following:
-7. In **Action name**, type a name to identify the action.
+7. In **Action name**, type a name to identify the action like **EmailApproval**.
 8. In **Action provider**, choose **Manual approval**.
 9. In **SNS topic ARN**, choose the name of the topic created to send notifications for the approval action.
 10. (Optional) In **Comments**, type any additional information you want to share with the reviewer.
@@ -143,4 +143,3 @@ Once you approve, the pipeline continues and completes successfully.
 This **concludes Lab 3**. In this lab, we successfully created CodePipeline for continuous code build and deployment. We also modified CodePipeline to include manual approval action before deploying code to production environment. We also successfully completed continuous deployment of application to both test and production servers. You can now move to the next Lab,
 
 [Lab 4 (Optional) - Using Lambda as Test Stage in CodePipeline](4_Lab4.md)
-
