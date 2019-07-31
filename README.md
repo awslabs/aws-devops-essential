@@ -35,6 +35,8 @@ Amazon EC2
 
 Amazon SNS
 
+Amazon CloudWatch Events
+
 ***
 
 ### **Important:**
