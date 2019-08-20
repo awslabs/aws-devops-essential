@@ -81,7 +81,7 @@ We will edit the pipeline to add the stage for production deployment and introdu
 8. Choose **Save**.
 9. Finally, save changes by clicking **Save** button on top.
 
-![pipeline-edit](./img/Lab3-Stage3-Editing.PNG)
+![pipeline-edit](./img/Lab3-Stage3-Editing2.PNG)
 ***
 
 ### Stage 4: Add Manual approval action
