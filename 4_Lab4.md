@@ -141,7 +141,7 @@ You can also choose to add your Lambda action to an existing stage. For demonstr
 
 3. Finally, save changes to pipeline by clicking **Save** button on top..
 
-![lambdaAction](./img/Lab4-LambdaAction.png)
+![lambdaAction](./img/Lab4-LambdaAction2.png)
 
 ***
 
