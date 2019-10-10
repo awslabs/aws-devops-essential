@@ -226,9 +226,11 @@ In this step, you will add a new stages to your pipeline, and then add an action
 
 3. Choose **Done**.
 
-6. Choose the option to add a stage after the **ContainerBuild** stage with the AWS CodeDeploy action. Type a name for the stage (for example, **ContainerDeploy**).
+![ECRBuild](./img/Lab5-ECRBuild.png)
 
-7. Choose **+ Add action group**,
+4. Choose the option to add a stage after the **ContainerBuild** stage with the AWS CodeDeploy action. Type a name for the stage (for example, **ContainerDeploy**).
+
+5. Choose **+ Add action group**,
 - Type a name for your action (for example, **FargateDeploy**).
 - For **Action Provider**, choose **Amazon ECS**.
 - In **Input artifacts**: select the **ContainerBuildArtifact**
@@ -236,9 +238,11 @@ In this step, you will add a new stages to your pipeline, and then add an action
 - In **Service   name**, and **Select**  the cluster starting with **ecsdemo-javawebapp**
 - In **Image definitions file**: Type  **imagedefinitions.json**
 
-8. Choose **Done**.
+6. Choose **Done**.
 
-9. Save changes to pipeline by clicking **Save** button on top of the page.
+![FargateDeploy](./img/Lab5-FargateDeploy.png)
+
+7. Save changes to pipeline by clicking **Save** button on top of the page.
 
 ### Stage 4: Modify buildspec files for ECS deployment
 
@@ -310,6 +314,8 @@ user:~/environment/WebAppRepo/ $ git push -u origin master
 ```
 
 Check the pipeline for detecting the commit changes and executing the steps.
+
+![PipelineStatus](./img/Lab5-PipelineStatus.png)
 
 4. Once the pipeline succeed in depoying the code to Fargate, test the page by using the below url.
 
