@@ -75,7 +75,7 @@ Provide your Git HTTPs credential when prompted. You would be seeing the followi
 1. Download the Sample Web App Archive by running the following command from IDE terminal.
 
 ```console
-user:~/environment $ wget https://github.com/awslabs/aws-devops-essential/raw/master/sample-app/Web-App-Archive.zip
+user:~/environment $ wget https://s3.amazonaws.com/devops-workshop-0526-2051/v1/Web-App-Archive.zip
 ```
 
 2. Unarchive and copy all the **_contents_** of the unarchived folder to your local repo folder.
@@ -130,7 +130,7 @@ For more information, see [Browse the Contents of a Repository](http://docs.aws.
 
 ```console
 user:~/environment/WebAppRepo (master) $ aws cloudformation create-stack --stack-name DevopsWorkshop-roles \
---template-body https://s3.amazonaws.com/devops-workshop-0526-2051/01-aws-devops-workshop-roles.template \
+--template-body https://s3.amazonaws.com/devops-workshop-0526-2051/v1/01-aws-devops-workshop-roles.template \
 --capabilities CAPABILITY_IAM
 ```
 
@@ -144,8 +144,8 @@ user:~/environment/WebAppRepo (master) $ aws cloudformation create-stack --stack
 
 ```console
 user:~/environment/WebAppRepo (master) $ sudo yum -y install jq
-user:~/environment/WebAppRepo (master) $ echo $(aws cloudformation describe-stacks --stack-name DevopsWorkshop-roles | jq -r '.Stacks[0].Outputs[]|select(.OutputKey=="BuildRoleArn")|.OutputValue')
-user:~/environment/WebAppRepo (master) $ echo $(aws cloudformation describe-stacks --stack-name DevopsWorkshop-roles | jq -r '.Stacks[0].Outputs[]|select(.OutputKey=="S3BucketName")|.OutputValue')
+user:~/environment/WebAppRepo (master) $ echo YOUR-BuildRole-ARN: $(aws cloudformation describe-stacks --stack-name DevopsWorkshop-roles | jq -r '.Stacks[0].Outputs[]|select(.OutputKey=="CodeBuildRoleArn")|.OutputValue')
+user:~/environment/WebAppRepo (master) $ echo YOUR-S3-OUTPUT-BUCKET-NAME: $(aws cloudformation describe-stacks --stack-name DevopsWorkshop-roles | jq -r '.Stacks[0].Outputs[]|select(.OutputKey=="S3BucketName")|.OutputValue')
 ```
 
 5. Let us **create CodeBuild** project from **CLI**. To create the build project using AWS CLI, we need JSON-formatted input.
@@ -161,7 +161,7 @@ user:~/environment/WebAppRepo (master) $ echo $(aws cloudformation describe-stac
   },
   "artifacts": {
     "type": "S3",
-    "location": "<<REPLACE-YOUR-CODEBUILD-OUTPUT-BUCKET>>",
+    "location": "<<REPLACE-YOUR-S3-OUTPUT-BUCKET-NAME>>",
     "packaging": "ZIP",
     "name": "WebAppOutputArtifact.zip"
   },
@@ -170,7 +170,7 @@ user:~/environment/WebAppRepo (master) $ echo $(aws cloudformation describe-stac
     "image": "aws/codebuild/java:openjdk-8",
     "computeType": "BUILD_GENERAL1_SMALL"
   },
-  "serviceRole": "<<REPLACE-BuildRoleArn-Value-FROM-CLOUDFORMATION-OUTPUT>>"
+  "serviceRole": "<<REPLACE-YOUR-BuildRole-ARN>>"
 }
 ```
     

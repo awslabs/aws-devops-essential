@@ -53,7 +53,7 @@ Image below shows successfully executed pipeline.
 1. Run the following to create a deployment group and associates it with the specified application and the user's AWS account. You need to replace the service role ARN we created using roles stack.
 
 ```console
-user:~/environment/WebAppRepo (master) $ echo $(aws cloudformation describe-stacks --stack-name DevopsWorkshop-roles | jq -r '.Stacks[0].Outputs[]|select(.OutputKey=="DeployRoleArn")|.OutputValue')
+user:~/environment/WebAppRepo (master) $ echo YOUR-CODEDEPLOY-ROLE-ARN: $(aws cloudformation describe-stacks --stack-name DevopsWorkshop-roles | jq -r '.Stacks[0].Outputs[]|select(.OutputKey=="CodeDeployRoleArn")|.OutputValue')
 
 user:~/environment $ aws deploy create-deployment-group --application-name DevOps-WebApp  \
 --deployment-config-name CodeDeployDefault.OneAtATime \
@@ -99,9 +99,9 @@ user:~/environment $ aws sns create-topic --name WebApp-Approval-Topic --region 
 2. **Subscribe** to the topic using your email id. **Replace** the **ARN** and **email id** placeholders accordingly.
 
 ```console
-user:~/environment $ aws sns subscribe --topic-arn <<YOUR-TOPIC-ARN>> \
+user:~/environment $ aws sns subscribe --topic-arn <<REPLACE-YOUR-TOPIC-ARN>> \
 --protocol email \
---notification-endpoint <<YOUR-EMAIL-ID>>
+--notification-endpoint <<REPLACE-YOUR-EMAIL-ID>>
 ```
 
 3. An Email would be sent for **confirmation** on the subscription. **Acknowledge** the subscription to receive mails from topic.

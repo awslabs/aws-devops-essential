@@ -7,7 +7,7 @@
 
 ```console
 user:~/environment/WebAppRepo (master) $ aws cloudformation create-stack --stack-name DevopsWorkshop-Env \
---template-body https://s3.amazonaws.com/devops-workshop-0526-2051/02-aws-devops-workshop-environment-setup.template \
+--template-body https://s3.amazonaws.com/devops-workshop-0526-2051/v1/02-aws-devops-workshop-environment-setup.template \
 --capabilities CAPABILITY_IAM
 ```
 
@@ -29,7 +29,7 @@ user:~/environment/WebAppRepo (master) $ aws deploy create-application --applica
 2. Run the following to create a deployment group and associates it with the specified application and the user's AWS account. You need to replace the service role with **DeployRoleArn Value** we created using roles CFN stack.
 
 ```console
-user:~/environment/WebAppRepo (master) $ echo $(aws cloudformation describe-stacks --stack-name DevopsWorkshop-roles | jq -r '.Stacks[0].Outputs[]|select(.OutputKey=="DeployRoleArn")|.OutputValue')
+user:~/environment/WebAppRepo (master) $ echo $(aws cloudformation describe-stacks --stack-name DevopsWorkshop-roles | jq -r '.Stacks[0].Outputs[]|select(.OutputKey=="CodeDeployRoleArn")|.OutputValue')
 
 user:~/environment/WebAppRepo (master) $ aws deploy create-deployment-group --application-name DevOps-WebApp \
 --deployment-config-name CodeDeployDefault.OneAtATime \
@@ -136,7 +136,8 @@ user:~/environment/WebAppRepo (master) $ aws codebuild start-build --project-nam
 3. Get the **_eTag_** for the object **WebAppOutputArtifact.zip** uploaded to S3 bucket. You can get etag by visiting S3 console. Or, executing the following command.
 
 ```console
-user:~/environment/WebAppRepo (master) $ aws s3api head-object --bucket <<YOUR-CODEBUILD-OUTPUT-BUCKET>> \
+user:~/environment/WebAppRepo (master) $ echo YOUR-S3-OUTPUT-BUCKET-NAME: $(aws cloudformation describe-stacks --stack-name DevopsWorkshop-roles | jq -r '.Stacks[0].Outputs[]|select(.OutputKey=="S3BucketName")|.OutputValue')
+user:~/environment/WebAppRepo (master) $ aws s3api head-object --bucket <<REPLACE-YOUR-S3-OUTPUT-BUCKET-NAME>> \
 --key WebAppOutputArtifact.zip
 
 ```
@@ -145,13 +146,13 @@ As a sample S3 properties console showing etag below:
 
 ![etag](./img/etag.png)
 
-4. Run the following to create a deployment. **_Replace_** <<YOUR-CODEBUILD-OUTPUT-BUCKET>> with your **_S3 bucket name_** created in Lab 1. Also, update the **_eTag_** based on previous step.
+4. Run the following to create a deployment. **_Replace_** <<REPLACE-YOUR-S3-OUTPUT-BUCKET-NAME>> with your **_S3 bucket name_** created in Lab 1. Also, update the **_eTag_** based on previous step.
 
 ```console
 user:~/environment/WebAppRepo (master) $ aws deploy create-deployment --application-name DevOps-WebApp \
 --deployment-group-name DevOps-WebApp-BetaGroup \
 --description "My very first deployment" \
---s3-location bucket=<<YOUR-CODEBUILD-OUTPUT-BUCKET>>,key=WebAppOutputArtifact.zip,bundleType=zip,eTag=<<YOUR-ETAG-VALUE>>
+--s3-location bucket=<<REPLACE-YOUR-S3-OUTPUT-BUCKET-NAME>>,key=WebAppOutputArtifact.zip,bundleType=zip,eTag=<<REPLACE-YOUR-ETAG-VALUE>>
 ```
 
 5. **Confirm** via IAM Roles, if associated EC2 instance has appropriate permissions to read from bucket specified above. If not, you will get Access Denied at the DownloadBundle step during deployment.

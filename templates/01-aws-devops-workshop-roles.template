@@ -76,10 +76,11 @@
               ]
             },
             {
-              "Sid": "SSMParameterPolicy",
+              "Sid": "OtherPolicies",
               "Effect": "Allow",
               "Action": [
-                "ssm:GetParameters"
+                "ssm:GetParameters",
+                "ecr:*"
               ],
               "Resource": [
                 "*"
@@ -169,7 +170,9 @@
                 "codedeploy:GetDeploymentConfig",
                 "codedeploy:RegisterApplicationRevision",
                 "lambda:*",
-                "sns:*"
+                "sns:*",
+                "ecs:*",
+                "ecr:*"
               ],
               "Resource": "*",
               "Effect": "Allow"
@@ -267,17 +270,17 @@
   },
 
   "Outputs" : {
-    "BuildRoleArn" : {
+    "CodeBuildRoleArn" : {
       "Value" : { "Fn::GetAtt" : [ "BuildTrustRole", "Arn" ] },
       "Description" : "Build role Arn"
     },
 
-    "DeployRoleArn" : {
+    "CodeDeployRoleArn" : {
       "Value" : { "Fn::GetAtt" : [ "DeployTrustRole", "Arn" ] },
       "Description" : "Deploy role Arn"
     },
 
-    "PipelineRoleArn" : {
+    "CodePipelineRoleArn" : {
       "Value" : { "Fn::GetAtt" : [ "PipelineTrustRole", "Arn" ] },
       "Description" : "Pipeline role Arn"
     },
