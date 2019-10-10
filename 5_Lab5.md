@@ -151,8 +151,7 @@ Note: When we created the config, we had specified default launchtype of Fargate
 
 ### Stage 3: Create CodeBuild Project for building docker image
 
-1. Let us **create CodeBuild** project from **CLI**. To create the build project using AWS CLI, we need JSON-formatted input.
-    **_Create_** a json file named **_'create-container-project.json'_** under 'MyDevEnvironment'. ![](./img/create-json.png) Copy the content below to create-project.json. (Replace the placeholders marked with **_<<>>_** with  values for BuildRole ARN, S3 Output Bucket and region from the previous step.) 
+1. Let us **create CodeBuild** project from **CLI**. To create the build project using AWS CLI, we need JSON-formatted input. Execute the below commands to fill in the json file.
 
 ```console
 user:~/environment/ $ echo YOUR-S3-OUTPUT-BUCKET-NAME: $(aws cloudformation describe-stacks --stack-name DevopsWorkshop-roles | jq -r '.Stacks[0].Outputs[]|select(.OutputKey=="S3BucketName")|.OutputValue')
@@ -161,6 +160,10 @@ user:~/environment/ $ echo YOUR_AWS_ACCOUNTID: $(aws sts get-caller-identity| jq
 user:~/environment/ $ echo YOUR-BuildRole-ARN: $(aws cloudformation describe-stacks --stack-name DevopsWorkshop-roles | jq -r '.Stacks[0].Outputs[]|select(.OutputKey=="CodeBuildRoleArn")|.OutputValue')
 
 ```
+
+2. **_Create_** a json file named **_'create-container-project.json'_** under 'MyDevEnvironment'. 
+    ![](./img/create-container-json.png) 
+    Copy the content below to create-project.json. (Replace the placeholders marked with **_<<>>_** with  values for BuildRole ARN, S3 Output Bucket and region from the previous step.) 
 
 ```json
 {
@@ -205,7 +208,7 @@ user:~/environment/ $ echo YOUR-BuildRole-ARN: $(aws cloudformation describe-sta
 }
 ```
 
-2. Switch to the directory that contains the file you just saved, and run the **_create-project_** command:
+3. Switch to the directory that contains the file you just saved, and run the **_create-project_** command:
 
 ```console
 user:~/environment $ aws codebuild create-project --cli-input-json file://create-container-project.json
