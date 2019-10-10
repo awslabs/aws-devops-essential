@@ -117,7 +117,7 @@ user:~/environment $ envsubst < ecs-params.yml.template >ecs-params.yml
 ```
 The envsubst command templates our ecs-params.yml file with our current values. 
 
-7. Create a new file namely, **_docker-comppose.yml_**. Copy the content below to the file and **save** it.
+7. Create a new file namely, **_docker-compose.yml_**. Copy the content below to the file and **save** it.
 
 ```yaml
 version: '2'
