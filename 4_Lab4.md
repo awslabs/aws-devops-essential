@@ -4,27 +4,43 @@
 ### Stage 1: Create a sample Lambda function
 
 1. Go to Cloud9 IDE
-2. On the right hand side-menu, select **AWS Resources**
-3. Expand Lambda, and select **λ+** [Create a lambda function]
-4. Enter Function Name as **MyLambdaFunctionForAWSCodePipeline**
-5. Click **Next**
-6. Select runtime as **Node.js 8.10** and blue print as **empty-nodejs**
-7. Click **Next**
-8. Select Function trigger as **none** and click **Next**
-9. For Role, select **choose an existing role** and select **CodePipelineLambdaExecRole** which we created as part of the Lab 1 setup.
-10. Click **Next** and preview the changes. Once done, click **Finish**.
-![LambdaConfig](./img/Lab4-Lambda-Config.png)
+2. On the left hand side-menu, select **AWS Explorer** (the icon with the AWS logo on it).
+3. Expand the region and right click on **Lambda**. Then select **Create new SAM application**.
+4. Select **nodejs10.x** as the runtime.
+5. Select the **AWS SAM Hello World** template.
+6. Choose the root directory (_MyDevEnvironment_ if you used the same name conventions as we did).
+7. Then enter a name for your app, such as **MyLambdaFunctionForAWSCodePipeline**.
+8. Hit Enter.
 
-**Note:** Cloud9 will create a local Lambda function named MyLambdaFunctionForAWSCodePipeline.
+9. A new directory will be created at the root of your environment. Inside of it, open the file `template.yaml` and replace its contents with the following. Make sure to replace `<CODEPIPELINE_LAMBDA_EXECUTION_ROLE_ARN>` with the complete ARN of the role created as part of the initial CloudFormation stack (you'll find it in the Outputs tab with the key **LambdaRoleArn**):
 
-11. Then **copy** the following code into the Lambda function **index.js** and **save** it.
+```yaml
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+
+Globals:
+  Function:
+    Timeout: 60
+
+Resources:
+  HelloWorldFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: hello-world/
+      Handler: app.lambdaHandler
+      Runtime: nodejs10.x
+      Role: '<CODEPIPELINE_LAMBDA_EXECUTION_ROLE_ARN>'
+
+```
+
+10. Finally, open `hello-world/app.js` and replace its contents with the following:
 
 ```js
 var assert = require('assert');
 var AWS = require('aws-sdk');
 var http = require('http');
 
-exports.handler = function(event, context) {
+exports.lambdaHandler = function(event, context) {
 
     var codepipeline = new AWS.CodePipeline();
 
@@ -117,10 +133,11 @@ exports.handler = function(event, context) {
 };
 ```
 
-12. Lets deploy the modified function by clicking the deploy button as shown below.
-![lambda-deploy](./img/lambda-deploy.png)
+11. To deploy the function, right-click again on Lambda (in the left side menu, in **AWS Explorer**) and choose **Deploy SAM Application** this time.
+12. Select the single available app, as well as the S3 bucket, and provide a name to the CloudFormation stack.
+13. Press Enter.
 
-13. Review the deployment changes by visiting the [Lambda console](https://console.aws.amazon.com/lambda). 
+The console will show the progress of the deployment. Wait until it completes. You can view the deployed function in the [Lambda console](https://console.aws.amazon.com/lambda).
 
 ***
 

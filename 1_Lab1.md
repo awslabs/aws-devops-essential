@@ -57,16 +57,24 @@ Keep an open scratch pad in Cloud9 or a text editor on your local computer for n
 
 In this step, you will connect to the source repository created in the previous step. Here, you use Git to clone and initialize a copy of your empty AWS CodeCommit repository. Then you specify the user name and email address used to annotate your commits.
 
-1. From CodeCommit Console, you can get the **https clone url** link for your repo.
-2. Go to Cloud9 IDE terminal prompt
-3. Run git clone to pull down a copy of the repository into the local repo:
+First, let's install the git-remote-codecommit (GRC) utility, which will assist us with authenticating to CodeCommit. Run the following from the Cloud9 terminal prompt:
 
 ```console
-user:~/environment $ git clone https://git-codecommit.<YOUR-REGION>.amazonaws.com/v1/repos/WebAppRepo
+pip install --user git-remote-codecommit
+```
+
+Now do the following to clone the repository:
+
+1. From CodeCommit Console, go to your repository. Click on the **Clone URL** dropdown and then choose **Clone HTTPS (GRC)**. The URL will be copied to your clipboard.
+2. Go to Cloud9 IDE terminal prompt
+3. Run git clone to pull down a copy of the repository into the local repo, using the URL copied above. It should be something like this:
+
+```console
+user:~/environment $ git clone codecommit::<YOUR-REGION>://WebAppRepo
 
 ```
 
-Provide your Git HTTPs credential when prompted. You would be seeing the following message if cloning is successful. ***warning: You appear to have cloned an empty repository.***
+You would be seeing the following message if cloning is successful. ***warning: You appear to have cloned an empty repository.***
 
 ***
 
@@ -101,19 +109,11 @@ user:~/environment/WebAppRepo/ $ git commit -m "Initial Commit"
 
 **_💡 Tip_** To see details about the commit you just made, run **_git log_**.
 
-5. Run **_git config credential_** to store the credential.
-
-```console
-user:~/environment/WebAppRepo/ $ git config credential.helper store
-```
-
-6. Run **_git push_** to push your commit through the default remote name Git uses for your AWS CodeCommit repository (origin), from the default branch in your local repo (master):
+5. Run **_git push_** to push your commit through the default remote name Git uses for your AWS CodeCommit repository (origin), from the default branch in your local repo (master):
 
 ```console
 user:~/environment/WebAppRepo/ $ git push -u origin master
 ```
-
-Provide your Git HTTPs credential when prompted. Credential helper will store it, hence you won't be asked again for subsequent push.
 
 **_💡 Tip_** After you have pushed files to your AWS CodeCommit repository, you can use the [AWS CodeCommit console](https://console.aws.amazon.com/codecommit/home) to view the contents.
 
