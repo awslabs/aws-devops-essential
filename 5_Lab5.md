@@ -31,14 +31,14 @@ user:~/environment $ aws iam get-role --role-name "AWSServiceRoleForECS" || aws 
 3. Build a VPC, ECS Cluster:
 
 ```console
-user:~/environment $ aws cloudformation create-stack --stack-name ecs-demo-setup --template-body https://s3.amazonaws.com/devops-workshop-0526-2051/v1/cluster-fargate-vpc.yml --capabilities CAPABILITY_IAM
+user:~/environment $ aws cloudformation create-stack --stack-name ecs-demo-setup --template-body https://d328byk3yyihdi.cloudfront.net/v1/cluster-fargate-vpc.yml --capabilities CAPABILITY_IAM
 ```
 Wait for the stack to get completed. Visit Cloudformation console to check the status.
 
 4. Build Load balancer for Webapp container.
 
 ```console
-user:~/environment $ aws cloudformation create-stack --stack-name ecs-demo-alb --template-body https://s3.amazonaws.com/devops-workshop-0526-2051/v1/alb-external.yml
+user:~/environment $ aws cloudformation create-stack --stack-name ecs-demo-alb --template-body https://d328byk3yyihdi.cloudfront.net/v1/alb-external.yml
 
 ```
 Wait for the stack to get completed before proceeding to next step.
