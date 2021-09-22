@@ -83,7 +83,7 @@ You would be seeing the following message if cloning is successful. ***warning: 
 1. Download the Sample Web App Archive by running the following command from IDE terminal.
 
 ```console
-user:~/environment $ wget https://s3.amazonaws.com/devops-workshop-0526-2051/v1/Web-App-Archive.zip
+user:~/environment $ wget https://d328byk3yyihdi.cloudfront.net/v1/Web-App-Archive.zip
 ```
 
 2. Unarchive and copy all the **_contents_** of the unarchived folder to your local repo folder.
@@ -130,7 +130,7 @@ For more information, see [Browse the Contents of a Repository](http://docs.aws.
 
 ```console
 user:~/environment/WebAppRepo (master) $ aws cloudformation create-stack --stack-name DevopsWorkshop-roles \
---template-body https://s3.amazonaws.com/devops-workshop-0526-2051/v1/01-aws-devops-workshop-roles.template \
+--template-body https://d328byk3yyihdi.cloudfront.net/v1/01-aws-devops-workshop-roles.template \
 --capabilities CAPABILITY_IAM
 ```
 
