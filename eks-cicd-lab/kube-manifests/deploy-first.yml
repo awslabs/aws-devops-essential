@@ -1,7 +1,7 @@
 apiVersion: extensions/v1beta1 # for versions before 1.6.0 use extensions/v1beta1
 kind: Deployment
 metadata:
-  name: codesuite-demo
+  name: codeservices-demo
 spec:
   replicas: 3
   template:
@@ -18,7 +18,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: codesuite-demo
+  name: codeservices-demo
 spec:
   type: LoadBalancer
   selector:
