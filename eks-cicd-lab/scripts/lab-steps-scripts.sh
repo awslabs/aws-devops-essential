@@ -106,7 +106,7 @@ kubectl get nodes
 
 # Deploy a sample docker application manually:
 kubectl apply -f ./aws-eks-cicd-essentials/kube-manifests/deploy-first.yml
-kubectl get svc codesuite-demo -o wide
+kubectl get svc codeservices-demo -o wide
 
 
 # Create Code Repository for sample EKS project: eks-cicd-demo-repo
@@ -121,7 +121,7 @@ git config --global credential.UseHttpPath true
 git clone https://git-codecommit.us-west-2.amazonaws.com/v1/repos/eks-cicd-demo-repo
 cp aws-eks-cicd-essentials/sample-app/* eks-cicd-demo-repo/
 cd eks-cicd-demo-repo
-git add . && git commit -m "test CodeSuite" && git push origin master
+git add . && git commit -m "test Code Services" && git push origin master
 
 
 # Setup Lambda for deployment
